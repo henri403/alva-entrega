@@ -11,7 +11,7 @@ app = Flask(__name__, static_folder='.')
 SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 587
 SMTP_USER = "henrifavila@gmail.com"
-SMTP_PASSWORD = "iqdo mtbg vvmz pvuu"  # Senha de aplicativo do Gmail
+SMTP_PASSWORD = "iqdo mtbg vvmz pvuu"
 
 # --- Mapeamento de Arquivos PDF ---
 PRODUCT_FILES = {
@@ -52,58 +52,23 @@ PRODUCT_FILES = {
     "Alva - Guia IA para Negócios": ["modules/guia_ia_negocios.pdf"]
 }
 
-def send_email_with_attachments(recipient_email, product_name, file_paths):
-    try:
-        msg = MIMEMultipart()
-        msg['From'] = SMTP_USER
-        msg['To'] = recipient_email
-        msg['Subject'] = f"Seu acesso: {product_name} - Alva Educação"
-
-        body = f"""
-        <html>
-        <body>
-            <h2>Olá!</h2>
-            <p>Obrigado por sua compra na <strong>Alva Educação</strong>.</p>
-            <p>Seu acesso ao <strong>{product_name}</strong> já está disponível. Segue em anexo o conteúdo em PDF.</p>
-            <p>Bons estudos e boas vendas!</p>
-            <br>
-            <p>Atenciosamente,<br>Equipe Alva Educação</p>
-        </body>
-        </html>
-        """
-        msg.attach(MIMEText(body, 'html'))
-
-        for path in file_paths:
-            if os.path.exists(path):
-                with open(path, "rb") as f:
-                    attach = MIMEApplication(f.read(), _subtype="pdf")
-                    attach.add_header('Content-Disposition', 'attachment', filename=os.path.basename(path))
-                    msg.attach(attach)
-
-        server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
-        server.starttls()
-        server.login(SMTP_USER, SMTP_PASSWORD)
-        server.sendmail(SMTP_USER, recipient_email, msg.as_string())
-        server.quit()
-        return True
-    except Exception as e:
-        print(f"Erro ao enviar e-mail: {e}")
-        return False
-
-# Rota para servir o index.html como página principal
+# Rota principal
 @app.route('/')
 def index():
     return send_from_directory('.', 'index.html')
 
-# Rota para servir outros arquivos estáticos (como a logo)
+# Rota para arquivos na pasta assets (Logos, etc)
+@app.route('/assets/<path:filename>')
+def serve_assets(filename):
+    return send_from_directory('assets', filename)
+
+# Rota para outros arquivos na raiz
 @app.route('/<path:path>')
 def static_files(path):
     return send_from_directory('.', path)
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
-    data = request.json
-    # Lógica de processamento do Mercado Pago aqui
     return jsonify({"status": "received"}), 200
 
 if __name__ == '__main__':
