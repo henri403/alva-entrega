@@ -1,11 +1,11 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 import os
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='.')
 
 # --- Configuração de E-mail ---
 SMTP_SERVER = "smtp.gmail.com"
@@ -14,7 +14,6 @@ SMTP_USER = "henrifavila@gmail.com"
 SMTP_PASSWORD = "iqdo mtbg vvmz pvuu"  # Senha de aplicativo do Gmail
 
 # --- Mapeamento de Arquivos PDF ---
-# Mapeamos o nome que vem do Mercado Pago para o caminho do arquivo no servidor
 PRODUCT_FILES = {
     "Alva - Módulo 0: Segredo das Vendas": ["modules/modulo_00_o_segredo_das_vendas_de_alto_impacto_revisado.pdf"],
     "Alva - Módulo 1: Relacionamentos": ["modules/modulo_1_construcao_relacionamentos_final_v7_final.pdf"],
@@ -50,11 +49,10 @@ PRODUCT_FILES = {
         "modules/modulo_14_lideranca_em_vendas_revisado.pdf",
         "modules/modulo_15_tendencias_futuras_e_inovacao.pdf"
     ],
-    "Alva - Guia IA para Negócios": ["modules/guia_ia_negocios.pdf"] # Nome sugerido, ajuste se necessário
+    "Alva - Guia IA para Negócios": ["modules/guia_ia_negocios.pdf"]
 }
 
 def send_email_with_attachments(recipient_email, product_name, file_paths):
-    """Envia um e-mail com os anexos PDF correspondentes ao produto."""
     try:
         msg = MIMEMultipart()
         msg['From'] = SMTP_USER
@@ -81,8 +79,6 @@ def send_email_with_attachments(recipient_email, product_name, file_paths):
                     attach = MIMEApplication(f.read(), _subtype="pdf")
                     attach.add_header('Content-Disposition', 'attachment', filename=os.path.basename(path))
                     msg.attach(attach)
-            else:
-                print(f"Aviso: Arquivo não encontrado: {path}")
 
         server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
         server.starttls()
@@ -94,25 +90,20 @@ def send_email_with_attachments(recipient_email, product_name, file_paths):
         print(f"Erro ao enviar e-mail: {e}")
         return False
 
-@app.route('/', methods=['GET'])
-def home():
-    return "Servidor Alva Educação Online", 200
+# Rota para servir o index.html como página principal
+@app.route('/')
+def index():
+    return send_from_directory('.', 'index.html')
+
+# Rota para servir outros arquivos estáticos (como a logo)
+@app.route('/<path:path>')
+def static_files(path):
+    return send_from_directory('.', path)
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
-    """Recebe notificações do Mercado Pago."""
     data = request.json
-    
-    # O Mercado Pago envia o ID do pagamento. 
-    # Em uma integração real, usaríamos esse ID para consultar a API do MP e pegar o e-mail e o item.
-    # Para simplificar e funcionar com os links diretos, podemos configurar o MP para enviar os dados.
-    
-    # Se o pagamento for aprovado
-    if data.get('action') == 'payment.created' or data.get('type') == 'payment':
-        # Aqui você precisaria da lógica para buscar os detalhes do pagamento via API do Mercado Pago
-        # usando o access_token da sua conta.
-        pass
-
+    # Lógica de processamento do Mercado Pago aqui
     return jsonify({"status": "received"}), 200
 
 if __name__ == '__main__':
