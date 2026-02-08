@@ -36,21 +36,18 @@
             gap: 15px;
         }
 
-        .logo {
-            width: 50px;
-            height: 50px;
-            background: transparent;
-            border-radius: 50%;
+        .logo-container {
+            width: 60px;
+            height: 60px;
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
         }
 
-        .logo img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+        .logo-container img {
+            max-width: 100%;
+            max-height: 100%;
+            display: block;
         }
 
         .header-title h1 {
@@ -778,21 +775,18 @@
             margin-bottom: 30px;
         }
 
-        .footer-logo-section .logo {
-            width: 60px;
-            height: 60px;
-            background: white;
-            border-radius: 50%;
+        .footer-logo-container {
+            width: 70px;
+            height: 70px;
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
         }
 
-        .footer-logo-section .logo img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+        .footer-logo-container img {
+            max-width: 100%;
+            max-height: 100%;
+            display: block;
         }
 
         footer h3 {
@@ -831,8 +825,8 @@
 <body>
     <header>
         <div class="logo-section">
-            <div class="logo">
-                <img src="./assets/logo.jpg" alt="Alva Educação Logo">
+            <div class="logo-container">
+                <img src="assets/logo.jpg" alt="Alva Educação Logo">
             </div>
             <div class="header-title">
                 <h1>Alva Educação</h1>
@@ -1315,7 +1309,9 @@
 
     <footer>
         <div class="footer-logo-section">
-            <div class="logo"><img src="./assets/logo.jpg" alt="Logo"></div>
+            <div class="footer-logo-container">
+                <img src="assets/logo.jpg" alt="Logo">
+            </div>
             <div>
                 <h3>Alva Educação</h3>
                 <p>Transformando vendedores em especialistas de alto impacto.</p>
@@ -1328,7 +1324,6 @@
     <script>
         let cart = JSON.parse(localStorage.getItem('alva_cart')) || [];
 
-        // Mapeamento de links do Mercado Pago
         const paymentLinks = {
             'O Segredo das Vendas de Alto Impacto': 'https://mpago.la/1yFBfUP',
             'Construção de Relacionamentos': 'https://mpago.la/347zNUZ',
@@ -1362,13 +1357,9 @@
             cart.push({ id: Date.now(), name, price });
             localStorage.setItem('alva_cart', JSON.stringify(cart));
             updateCartUI();
-            
-            // Feedback visual
             const badge = document.getElementById('cart-badge');
             badge.style.transform = 'scale(1.5)';
             setTimeout(() => badge.style.transform = 'scale(1)', 200);
-            
-            // Abrir carrinho automaticamente ao adicionar
             toggleCart();
         }
 
@@ -1417,8 +1408,6 @@
                 alert("Seu carrinho está vazio!");
                 return;
             }
-            
-            // Se houver apenas um item, vai direto para o link dele
             if (cart.length === 1) {
                 const link = paymentLinks[cart[0].name];
                 if (link) {
@@ -1427,16 +1416,11 @@
                     alert("Erro ao processar o link de pagamento.");
                 }
             } else {
-                // Se houver múltiplos itens, o ideal seria um checkout de carrinho.
-                // Como estamos usando links diretos do MP, vamos sugerir o Pacote Completo
-                // ou avisar que o checkout múltiplo requer integração via API.
                 if (confirm("Para múltiplos itens, recomendamos o Pacote Completo com desconto. Deseja ir para o Pacote Completo?")) {
                     window.location.href = paymentLinks['Pacote Completo (16 Módulos)'];
                 }
             }
         }
-
-        // Inicializar UI
         updateCartUI();
     </script>
 </body>
