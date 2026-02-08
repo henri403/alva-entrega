@@ -1,0 +1,1443 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alva Educação - Curso de Vendas de Alto Impacto</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            color: #1a1a1a;
+            background-color: #f8f9fa;
+            line-height: 1.6;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 20px;
+            background-color: white;
+            border-bottom: 1px solid #eee;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo {
+            width: 50px;
+            height: 50px;
+            background: transparent;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .header-title h1 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        .header-title p {
+            font-size: 10px;
+            color: #666;
+        }
+
+        .cart-icon-container {
+            position: relative;
+            cursor: pointer;
+            padding: 10px;
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: #ef4444;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 50%;
+            display: none;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+            color: white;
+            padding: 80px 40px;
+            text-align: center;
+        }
+
+        .hero h2 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .hero h2 .highlight {
+            color: #fbbf24;
+        }
+
+        .hero p {
+            font-size: 18px;
+            margin-bottom: 40px;
+            opacity: 0.95;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 40px;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .benefit-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .benefit-item span {
+            color: #fbbf24;
+            font-weight: bold;
+        }
+
+        .benefit-item p {
+            text-align: left;
+            font-size: 15px;
+            margin-bottom: 0;
+        }
+
+        .hero-highlight {
+            background: rgba(255, 255, 255, 0.15);
+            border-left: 4px solid #fbbf24;
+            padding: 25px;
+            border-radius: 8px;
+            margin-top: 40px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .stats-section {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            padding: 60px 40px;
+            background-color: white;
+            text-align: center;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stat-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: 700;
+            color: #7c3aed;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .testimonials-section {
+            padding: 60px 40px;
+            background-color: #f8f9fa;
+        }
+
+        .section-title {
+            font-size: 32px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .testimonial-card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .stars {
+            color: #fbbf24;
+            margin-bottom: 15px;
+        }
+
+        .testimonial-text {
+            font-style: italic;
+            color: #444;
+            margin-bottom: 20px;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .author-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .freedom-section {
+            padding: 80px 40px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #f0f0f5 100%);
+        }
+
+        .freedom-container {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+            text-align: center;
+        }
+
+        .freedom-image {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .freedom-image img {
+            width: 100%;
+            max-width: 600px;
+            border-radius: 16px;
+            box-shadow: 0 15px 40px rgba(124, 58, 237, 0.15);
+            object-fit: cover;
+        }
+
+        .freedom-text {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .freedom-phrase {
+            font-size: 32px;
+            font-weight: 800;
+            color: #7c3aed;
+            line-height: 1.5;
+            text-align: center;
+            letter-spacing: -0.5px;
+        }
+
+        .modules-section {
+            padding: 80px 40px;
+            background-color: white;
+        }
+
+        .modules-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .purchase-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: nowrap;
+            padding: 0 10px;
+        }
+
+        .tab-button {
+            padding: 18px 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            background: #e5e7eb;
+            color: #4b5563;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            white-space: nowrap;
+            flex: 1;
+            min-width: 0;
+            justify-content: center;
+        }
+
+        .tab-button.active {
+            background: #6366f1;
+            color: white;
+            border-color: #6366f1;
+        }
+
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .module-card {
+            background: white;
+            border: 1px solid #eee;
+            border-radius: 16px;
+            padding: 30px;
+            position: relative;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .module-card:hover {
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            transform: translateY(-10px);
+        }
+
+        .discount-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #c85a5a;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .module-number {
+            font-size: 12px;
+            font-weight: bold;
+            color: #7c3aed;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .module-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            line-height: 1.3;
+        }
+
+        .module-description {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 20px;
+            flex-grow: 1;
+            line-height: 1.5;
+        }
+
+        .highlights-label {
+            font-size: 12px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 12px;
+        }
+
+        .topic-list {
+            list-style: none;
+            margin-bottom: 25px;
+        }
+
+        .topic-list li {
+            font-size: 12px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #555;
+        }
+
+        .topic-list li::before {
+            content: "✓";
+            color: #10b981;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .module-pricing {
+            margin-bottom: 20px;
+        }
+
+        .old-price {
+            text-decoration: line-through;
+            color: #999;
+            font-size: 13px;
+            display: inline-block;
+            margin-right: 8px;
+        }
+
+        .new-price {
+            font-size: 26px;
+            font-weight: 800;
+            color: #6366f1;
+        }
+
+        .add-button {
+            width: 100%;
+            padding: 14px;
+            background: #6366f1;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .add-button:hover {
+            background: #4f46e5;
+        }
+
+        /* Estilos específicos para Pacotes Completos */
+        .complete-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .package-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 40px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .package-card.complete {
+            background: #f9fafb;
+        }
+
+        .package-card.ia-guide {
+            background: linear-gradient(135deg, #4f46e5 0%, #5b5ce8 100%);
+            color: white;
+            border: none;
+            padding: 40px;
+        }
+
+        .package-card .badge-complete {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #ef4444;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .package-card .badge-ia {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #fbbf24;
+            color: #1e1b4b;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .package-card .package-label {
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            opacity: 0.7;
+            color: #333;
+        }
+
+        .package-card.ia-guide .package-label {
+            color: white;
+            opacity: 0.9;
+        }
+
+        .package-card .package-title {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            color: #1a1a1a;
+        }
+
+        .package-card.ia-guide .package-title {
+            color: white;
+        }
+
+        .package-card .price-highlight {
+            display: inline-block;
+            background: #fbbf24;
+            color: #1e1b4b;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-weight: 800;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .package-card .package-desc {
+            font-size: 14px;
+            margin-bottom: 30px;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        .package-card.ia-guide .package-desc {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .package-card .highlights-box {
+            background: #f3f4f6;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            flex-grow: 1;
+        }
+
+        .package-card.ia-guide .highlights-box {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .package-card .highlights-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 18px;
+            color: #1a1a1a;
+        }
+
+        .package-card.ia-guide .highlights-title {
+            color: white;
+        }
+
+        .package-card .highlights-list {
+            list-style: none;
+        }
+
+        .package-card .highlights-list li {
+            font-size: 14px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            color: #555;
+        }
+
+        .package-card.ia-guide .highlights-list li {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .package-card .highlights-list li::before {
+            content: "✓";
+            color: #10b981;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        .package-card.ia-guide .highlights-list li::before {
+            color: #fbbf24;
+        }
+
+        .package-card .price-section {
+            margin-bottom: 25px;
+        }
+
+        .package-card .old-price {
+            text-decoration: line-through;
+            color: #9ca3af;
+            font-size: 16px;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .package-card .new-price {
+            font-size: 42px;
+            font-weight: 800;
+            color: #4f46e5;
+        }
+
+        .package-card.ia-guide .new-price {
+            color: #fbbf24;
+        }
+
+        .package-card .btn-buy {
+            width: 100%;
+            padding: 20px;
+            background: #4f46e5;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .package-card .btn-buy:hover {
+            background: #4338ca;
+            transform: translateY(-2px);
+        }
+
+        .package-card.ia-guide .btn-buy {
+            background: #fbbf24;
+            color: #4f46e5;
+        }
+
+        .package-card.ia-guide .btn-buy:hover {
+            background: #f59e0b;
+        }
+
+        /* Modal do Carrinho */
+        .cart-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: flex-end;
+        }
+
+        .cart-content {
+            width: 100%;
+            max-width: 400px;
+            background: white;
+            height: 100%;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .close-cart {
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .cart-items {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .cart-item-info h4 {
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .cart-item-info p {
+            font-size: 13px;
+            color: #6366f1;
+            font-weight: bold;
+        }
+
+        .remove-item {
+            color: #ef4444;
+            font-size: 12px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .cart-total {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 800;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .checkout-button {
+            width: 100%;
+            padding: 18px;
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .checkout-button:hover {
+            background: #059669;
+        }
+
+        footer {
+            background: #1a1a1a;
+            color: white;
+            padding: 60px 40px;
+            text-align: center;
+        }
+
+        .footer-logo-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .footer-logo-section .logo {
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .footer-logo-section .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        footer h3 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        footer p {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        footer .copyright {
+            margin-top: 20px;
+            font-size: 13px;
+            opacity: 0.7;
+        }
+
+        footer .made-with {
+            font-size: 12px;
+            opacity: 0.6;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .hero h2 { font-size: 32px; }
+            .benefits-grid { grid-template-columns: 1fr; }
+            .stats-section { grid-template-columns: repeat(2, 1fr); }
+            .testimonials-grid { grid-template-columns: 1fr; }
+            .modules-grid { grid-template-columns: 1fr; }
+            .complete-grid { grid-template-columns: 1fr; }
+            .purchase-tabs { flex-direction: row; flex-wrap: wrap; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-section">
+            <div class="logo">
+                <img src="./assets/logo.jpg" alt="Alva Educação Logo">
+            </div>
+            <div class="header-title">
+                <h1>Alva Educação</h1>
+                <p>Aprimoramento em Vendas de Alto Impacto</p>
+            </div>
+        </div>
+        <div class="cart-icon-container" onclick="toggleCart()">
+            <span style="font-size: 24px;">🛒</span>
+            <span id="cart-badge" class="cart-badge">0</span>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <h2>Desvende os Segredos que <span class="highlight">Transformarão Suas Vendas</span> e Seu Negócio!</h2>
+            <p>Você está pronto para parar de lutar por cada cliente e, finalmente, dominar as estratégias que farão suas vendas decolar?</p>
+            
+            <div class="benefits-grid">
+                <div class="benefit-item">
+                    <span>✓</span>
+                    <p>Multiplicar suas vendas e alcançar faturamentos que você sempre sonhou</p>
+                </div>
+                <div class="benefit-item">
+                    <span>✓</span>
+                    <p>Conquistar e fidelize clientes com abordagens que realmente funcionam</p>
+                </div>
+                <div class="benefit-item">
+                    <span>✓</span>
+                    <p>Dominar as estratégias digitais mais eficazes para atrair leads qualificados</p>
+                </div>
+                <div class="benefit-item">
+                    <span>✓</span>
+                    <p>Transformar seu negócio em uma máquina de vendas autossustentável</p>
+                </div>
+            </div>
+
+            <div class="hero-highlight">
+                <p><strong>Este não é apenas mais um curso. É a sua oportunidade única de acessar um arsenal de táticas e ferramentas de marketing e vendas de alto impacto.</strong></p>
+                <p style="margin-top: 15px; font-size: 16px; opacity: 0.9;">Chega de tentar e errar! Chegou a hora de investir no que realmente importa: o conhecimento que te colocará à frente da concorrência.</p>
+            </div>
+        </section>
+
+        <section class="stats-section">
+            <div class="stat-item">
+                <div class="stat-icon">📚</div>
+                <div class="stat-number">16</div>
+                <div class="stat-label">Módulos Especializados</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-icon">⚡</div>
+                <div class="stat-number">100%</div>
+                <div class="stat-label">Prático e Aplicável</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-icon">🏆</div>
+                <div class="stat-number">Elite</div>
+                <div class="stat-label">Conteúdo de Alto Nível</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-icon">💎</div>
+                <div class="stat-number">Vitalício</div>
+                <div class="stat-label">Acesso Ilimitado</div>
+            </div>
+        </section>
+
+        <section class="testimonials-section">
+            <h2 class="section-title">O que é a Alva Educação?</h2>
+            <p class="section-subtitle" style="max-width: 800px; margin: 0 auto 40px auto; line-height: 1.8;">
+                Na Alva Educação, acreditamos que o sucesso em vendas e marketing não deve ser um mistério. Nosso propósito é trazer luz às estratégias que realmente funcionam, eliminando o excesso de informação e entregando o que há de mais límpido e prático no mercado. Aqui, o seu aprendizado é o despertar para uma nova performance: cursos estruturados para quem busca clareza técnica e honestidade nos métodos.
+            </p>
+            
+            <div style="max-width: 1000px; margin: 0 auto; background: white; padding: 40px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05);">
+                <p style="font-size: 18px; line-height: 1.8; color: #333;">
+                    <strong>O que você leva na prática:</strong><br><br>
+                    Mais que teoria, a Alva te dá a prática de quem já chegou lá. Garanta o atalho para resultados reais replicando bastidores e estratégias validadas que geraram lucro e escala.
+                </p>
+            </div>
+        </section>
+
+        <section class="freedom-section">
+            <div class="freedom-container">
+                <div class="freedom-image">
+                    <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Trabalho Remoto e Liberdade">
+                </div>
+                <div class="freedom-text">
+                    <p class="freedom-phrase">Tenha liberdade para adequar o curso à sua localização: em casa, no café, voltando do trabalho ou de onde quiser.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="modules-section">
+            <div class="modules-header">
+                <h2 class="section-title">Escolha Seus Módulos</h2>
+                <p class="section-subtitle">Selecione apenas os módulos que você precisa ou adquira o pacote completo com desconto</p>
+                
+                <div class="purchase-tabs">
+                    <button id="btn-individual" class="tab-button active" onclick="switchTab('individual')">📦 Módulos Individuais</button>
+                    <button id="btn-complete" class="tab-button" onclick="switchTab('complete')">🎁 Pacotes Completos</button>
+                </div>
+                <p id="savings-msg" style="color: #6366f1; font-weight: bold; margin-top: -10px; margin-bottom: 30px; display: none;">Economize mais adquirindo pacotes completos com todos os cursos</p>
+            </div>
+
+            <div id="grid-individual" class="modules-grid">
+                <!-- Módulo 0 -->
+                <div class="module-card">
+                    <div class="discount-badge">-40%</div>
+                    <div class="module-number">Módulo 0</div>
+                    <h3 class="module-title">O Segredo das Vendas de Alto Impacto</h3>
+                    <p class="module-description">Domine a psicologia por trás das grandes decisões de compra e aprenda a aplicar gatilhos mentais poderosos que transformam qualquer abordagem comum em uma máquina de fechamento.</p>
+                    <p class="highlights-label">Destaques desse módulo:</p>
+                    <ul class="topic-list">
+                        <li>Psicologia das decisões de compra</li>
+                        <li>Mapeamento do perfil psicológico</li>
+                        <li>Técnicas avançadas de rapport</li>
+                    </ul>
+                    <div class="module-pricing">
+                        <span class="old-price">R$ 32,90</span>
+                        <div class="new-price">R$ 19,90</div>
+                    </div>
+                    <button class="add-button" onclick="addToCart('O Segredo das Vendas de Alto Impacto', 19.90)">🛒 Adicionar</button>
+                </div>
+
+                <!-- Módulo 1 -->
+                <div class="module-card">
+                    <div class="discount-badge">-40%</div>
+                    <div class="module-number">Módulo 1</div>
+                    <h3 class="module-title">Construção de Relacionamentos</h3>
+                    <p class="module-description">Descubra como construir uma base de confiança inabalável com seus clientes, transformando compradores ocasionais em defensores da sua marca.</p>
+                    <p class="highlights-label">Destaques desse módulo:</p>
+                    <ul class="topic-list">
+                        <li>Fundamentos da confiança</li>
+                        <li>Estratégias de fidelização</li>
+                        <li>Networking estratégico</li>
+                    </ul>
+                    <div class="module-pricing">
+                        <span class="old-price">R$ 32,90</span>
+                        <div class="new-price">R$ 19,90</div>
+                    </div>
+                    <button class="add-button" onclick="addToCart('Construção de Relacionamentos', 19.90)">🛒 Adicionar</button>
+                </div>
+
+                <!-- Módulo 2 -->
+                <div class="module-card">
+                    <div class="discount-badge">-40%</div>
+                    <div class="module-number">Módulo 2</div>
+                    <h3 class="module-title">Prospecção e Geração de Leads</h3>
+                    <p class="module-description">Aprenda a criar um fluxo constante de potenciais clientes qualificados, utilizando estratégias modernas para nunca mais ficar sem oportunidades.</p>
+                    <p class="highlights-label">Destaques desse módulo:</p>
+                    <ul class="topic-list">
+                        <li>Canais de prospecção</li>
+                        <li>Inbound vs Outbound</li>
+                        <li>Automação de leads</li>
+                    </ul>
+                    <div class="module-pricing">
+                        <span class="old-price">R$ 32,90</span>
+                        <div class="new-price">R$ 19,90</div>
+                    </div>
+                    <button class="add-button" onclick="addToCart('Prospecção e Geração de Leads', 19.90)">🛒 Adicionar</button>
+                </div>
+
+                <!-- Módulo 3 -->
+                <div class="module-card">
+                    <div class="discount-badge">-40%</div>
+                    <div class="module-number">Módulo 3</div>
+                    <h3 class="module-title">Qualificação de Leads e Identificação de Necessidades</h3>
+                    <p class="module-description">Domine a arte de fazer as perguntas certas para identificar as dores reais do cliente, garantindo que você ofereça exatamente o que ele precisa.</p>
+                    <p class="highlights-label">Destaques desse módulo:</p>
+                    <ul class="topic-list">
+                        <li>Metodologias BANT e SPIN</li>
+                        <li>Escuta ativa</li>
+                        <li>Diagnóstico de problemas</li>
+                    </ul>
+                    <div class="module-pricing">
+                        <span class="old-price">R$ 32,90</span>
+                        <div class="new-price">R$ 19,90</div>
+                    </div>
+                    <button class="add-button" onclick="addToCart('Qualificação de Leads e Identificação de Necessidades', 19.90)">🛒 Adicionar</button>
+                </div>
+
+                <!-- Módulo 4 -->
+                <div class="module-card">
+                    <div class="discount-badge">-40%</div>
+                    <div class="module-number">Módulo 4</div>
+                    <h3 class="module-title">Construção de Propostas de Valor</h3>
+                    <p class="module-description">Aprenda a estruturar ofertas tão irresistíveis que o preço se torna irrelevante diante do valor e da solução que você apresenta.</p>
+                    <p class="highlights-label">Destaques desse módulo:</p>
+                    <ul class="topic-list">
+                        <li>Diferenciação competitiva</li>
+                        <li>Anatomia da proposta</li>
+                        <li>Apresentação de ROI</li>
+                    </ul>
+                    <div class="module-pricing">
+                        <span class="old-price">R$ 32,90</span>
+                        <div class="new-price">R$ 19,90</div>
+                    </div>
+                    <button class="add-button" onclick="addToCart('Construção de Propostas de Valor', 19.90)">🛒 Adicionar</button>
+                </div>
+
+                <!-- Módulo 5 -->
+                <div class="module-card">
+                    <div class="discount-badge">-40%</div>
+                    <div class="module-number">Módulo 5</div>
+                    <h3 class="module-title">Técnicas de Persuasão e Influência</h3>
+                    <p class="module-description">Utilize técnicas avançadas de comunicação e influência para guiar o cliente na tomada de decisão de forma ética e profissional.</p>
+                    <p class="highlights-label">Destaques desse módulo:</p>
+                    <ul class="topic-list">
+                        <li>Gatilhos mentais</li>
+                        <li>Princípios de Cialdini</li>
+                        <li>Linguagem corporal</li>
+                    </ul>
+                    <div class="module-pricing">
+                        <span class="old-price">R$ 32,90</span>
+                        <div class="new-price">R$ 19,90</div>
+                    </div>
+                    <button class="add-button" onclick="addToCart('Técnicas de Persuasão e Influência', 19.90)">🛒 Adicionar</button>
+                </div>
+
+                <!-- Módulo 6 -->
+                <div class="module-card">
+                    <div class="discount-badge">-40%</div>
+                    <div class="module-number">Módulo 6</div>
+                    <h3 class="module-title">Apresentação de Soluções e Demonstrações</h3>
+                    <p class="module-description">Transforme suas apresentações em experiências memoráveis que eliminam dúvidas e encantam o cliente, destacando sua solução.</p>
+                    <p class="highlights-label">Destaques desse módulo:</p>
+                    <ul class="topic-list">
+                        <li>Storytelling em vendas</li>
+                        <li>Demonstrações práticas</li>
+                        <li>Pitch de vendas</li>
+                    </ul>
+                    <div class="module-pricing">
+                        <span class="old-price">R$ 32,90</span>
+                        <div class="new-price">R$ 19,90</div>
+                    </div>
+                    <button class="add-button" onclick="addToCart('Apresentação de Soluções e Demonstrações', 19.90)">🛒 Adicionar</button>
+                </div>
+
+                <!-- Módulo 7 -->
+                <div class="module-card">
+                    <div class="discount-badge">-40%</div>
+                    <div class="module-number">Módulo 7</div>
+                    <h3 class="module-title">Superação de Objeções</h3>
+                    <p class="module-description">Aprenda a antecipar e desarmar qualquer barreira de venda com elegância, transformando as dúvidas do cliente em argumentos poderosos.</p>
+                    <p class="highlights-label">Destaques desse módulo:</p>
+                    <ul class="topic-list">
+                        <li>Mapeamento de objeções</li>
+                        <li>Técnicas de contorno</li>
+                        <li>Resiliência comercial</li>
+                    </ul>
+                    <div class="module-pricing">
+                        <span class="old-price">R$ 32,90</span>
+                        <div class="new-price">R$ 19,90</div>
+                    </div>
+                    <button class="add-button" onclick="addToCart('Superação de Objeções', 19.90)">🛒 Adicionar</button>
+                </div>
+
+                <!-- Módulo 8 -->
+                <div class="module-card">
+                    <div class="discount-badge">-40%</div>
+                    <div class="module-number">Módulo 8</div>
+                    <h3 class="module-title">Técnicas de Fechamento</h3>
+                    <p class="module-description">Domine o momento decisivo da venda com técnicas que eliminam a hesitação e garantem o compromisso do cliente.</p>
+                    <p class="highlights-label">Destaques desse módulo:</p>
+                    <ul class="topic-list">
+                        <li>Sinais de compra</li>
+                        <li>Tipos de fechamento</li>
+                        <li>Redução de atrito</li>
+                    </ul>
+                    <div class="module-pricing">
+                        <span class="old-price">R$ 32,90</span>
+                        <div class="new-price">R$ 19,90</div>
+                    </div>
+                    <button class="add-button" onclick="addToCart('Técnicas de Fechamento', 19.90)">🛒 Adicionar</button>
+                </div>
+
+                <!-- Módulo 9 -->
+                <div class="module-card">
+                    <div class="discount-badge">-40%</div>
+                    <div class="module-number">Módulo 9</div>
+                    <h3 class="module-title">Negociação e Gestão de Contratos</h3>
+                    <p class="module-description">Desenvolva a habilidade de negociar termos que maximizam seus lucros enquanto mantêm a satisfação do cliente.</p>
+                    <p class="highlights-label">Destaques desse módulo:</p>
+                    <ul class="topic-list">
+                        <li>Estratégias ganha-ganha</li>
+                        <li>Gestão de concessões</li>
+                        <li>Cláusulas essenciais</li>
+                    </ul>
+                    <div class="module-pricing">
+                        <span class="old-price">R$ 32,90</span>
+                        <div class="new-price">R$ 19,90</div>
+                    </div>
+                    <button class="add-button" onclick="addToCart('Negociação e Gestão de Contratos', 19.90)">🛒 Adicionar</button>
+                </div>
+
+                <!-- Módulo 10 -->
+                <div class="module-card">
+                    <div class="discount-badge">-40%</div>
+                    <div class="module-number">Módulo 10</div>
+                    <h3 class="module-title">Follow-up e Pós-venda</h3>
+                    <p class="module-description">Descubra como manter o engajamento total do cliente após a venda, criando oportunidades de novas compras e indicações.</p>
+                    <p class="highlights-label">Destaques desse módulo:</p>
+                    <ul class="topic-list">
+                        <li>Régua de relacionamento</li>
+                        <li>Customer Success</li>
+                        <li>Upsell e Cross-sell</li>
+                    </ul>
+                    <div class="module-pricing">
+                        <span class="old-price">R$ 32,90</span>
+                        <div class="new-price">R$ 19,90</div>
+                    </div>
+                    <button class="add-button" onclick="addToCart('Follow-up e Pós-venda', 19.90)">🛒 Adicionar</button>
+                </div>
+
+                <!-- Módulo 11 -->
+                <div class="module-card">
+                    <div class="discount-badge">-40%</div>
+                    <div class="module-number">Módulo 11</div>
+                    <h3 class="module-title">Gestão de Pipeline e CRM</h3>
+                    <p class="module-description">Organize seu processo comercial de ponta a ponta, utilizando dados e ferramentas para ter controle total sobre cada etapa.</p>
+                    <p class="highlights-label">Destaques desse módulo:</p>
+                    <ul class="topic-list">
+                        <li>Etapas do funil</li>
+                        <li>Métricas de conversão</li>
+                        <li>Uso estratégico do CRM</li>
+                    </ul>
+                    <div class="module-pricing">
+                        <span class="old-price">R$ 32,90</span>
+                        <div class="new-price">R$ 19,90</div>
+                    </div>
+                    <button class="add-button" onclick="addToCart('Gestão de Pipeline e CRM', 19.90)">🛒 Adicionar</button>
+                </div>
+
+                <!-- Módulo 12 -->
+                <div class="module-card">
+                    <div class="discount-badge">-40%</div>
+                    <div class="module-number">Módulo 12</div>
+                    <h3 class="module-title">Vendas Digitais e Redes Sociais</h3>
+                    <p class="module-description">Posicione-se como uma autoridade no ambiente digital e utilize as redes sociais como ferramentas estratégicas para atrair clientes.</p>
+                    <p class="highlights-label">Destaques desse módulo:</p>
+                    <ul class="topic-list">
+                        <li>Social Selling</li>
+                        <li>Personal Branding</li>
+                        <li>Vendas via WhatsApp</li>
+                    </ul>
+                    <div class="module-pricing">
+                        <span class="old-price">R$ 32,90</span>
+                        <div class="new-price">R$ 19,90</div>
+                    </div>
+                    <button class="add-button" onclick="addToCart('Vendas Digitais e Redes Sociais', 19.90)">🛒 Adicionar</button>
+                </div>
+
+                <!-- Módulo 13 -->
+                <div class="module-card">
+                    <div class="discount-badge">-40%</div>
+                    <div class="module-number">Módulo 13</div>
+                    <h3 class="module-title">Análise de Dados e Métricas</h3>
+                    <p class="module-description">Aprenda a ler os números do seu negócio para identificar gargalos e oportunidades, tomando decisões baseadas em fatos.</p>
+                    <p class="highlights-label">Destaques desse módulo:</p>
+                    <ul class="topic-list">
+                        <li>KPIs de vendas</li>
+                        <li>Análise de performance</li>
+                        <li>Previsibilidade de receita</li>
+                    </ul>
+                    <div class="module-pricing">
+                        <span class="old-price">R$ 32,90</span>
+                        <div class="new-price">R$ 19,90</div>
+                    </div>
+                    <button class="add-button" onclick="addToCart('Análise de Dados e Métricas', 19.90)">🛒 Adicionar</button>
+                </div>
+
+                <!-- Módulo 14 -->
+                <div class="module-card">
+                    <div class="discount-badge">-40%</div>
+                    <div class="module-number">Módulo 14</div>
+                    <h3 class="module-title">Liderança em Vendas</h3>
+                    <p class="module-description">Desenvolva as competências necessárias para gerir e motivar equipes de alta performance, focado em metas claras.</p>
+                    <p class="highlights-label">Destaques desse módulo:</p>
+                    <ul class="topic-list">
+                        <li>Gestão de talentos</li>
+                        <li>Coaching de vendas</li>
+                        <li>Cultura de resultados</li>
+                    </ul>
+                    <div class="module-pricing">
+                        <span class="old-price">R$ 32,90</span>
+                        <div class="new-price">R$ 19,90</div>
+                    </div>
+                    <button class="add-button" onclick="addToCart('Liderança em Vendas', 19.90)">🛒 Adicionar</button>
+                </div>
+
+                <!-- Módulo 15 -->
+                <div class="module-card">
+                    <div class="discount-badge">-40%</div>
+                    <div class="module-number">Módulo 15</div>
+                    <h3 class="module-title">Tendências Futuras e Inovação</h3>
+                    <p class="module-description">Prepare-se para o futuro do mercado conhecendo as novas tecnologias e comportamentos de consumo que ditarão as regras.</p>
+                    <p class="highlights-label">Destaques desse módulo:</p>
+                    <ul class="topic-list">
+                        <li>IA em vendas</li>
+                        <li>Vendas consultivas 4.0</li>
+                        <li>Novos comportamentos</li>
+                    </ul>
+                    <div class="module-pricing">
+                        <span class="old-price">R$ 32,90</span>
+                        <div class="new-price">R$ 19,90</div>
+                    </div>
+                    <button class="add-button" onclick="addToCart('Tendências Futuras e Inovação', 19.90)">🛒 Adicionar</button>
+                </div>
+            </div>
+
+            <div id="grid-complete" class="complete-grid" style="display: none;">
+                <!-- Pacote Completo -->
+                <div class="package-card complete">
+                    <div class="badge-complete">MELHOR VALOR</div>
+                    <div class="package-label">Pacote Completo</div>
+                    <h3 class="package-title">Todos os 16 Módulos</h3>
+                    <span class="price-highlight">POR APENAS R$ 2,90 CADA!</span>
+                    <p class="package-desc">Acesso a todos os 16 módulos de vendas e marketing. Investimento único com acesso vitalício! Domine todas as estratégias de vendas de alto impacto.</p>
+                    
+                    <div class="highlights-box">
+                        <h4 class="highlights-title">Destaques desse pacote:</h4>
+                        <ul class="highlights-list">
+                            <li>16 módulos completos de vendas e marketing</li>
+                            <li>Acesso vitalício a todo o conteúdo</li>
+                            <li>Estratégias de alto impacto prontas para aplicar</li>
+                            <li>Suporte e atualizações contínuas</li>
+                        </ul>
+                    </div>
+
+                    <div class="price-section">
+                        <span class="old-price">R$ 318,40</span>
+                        <div class="new-price">R$ 46,40</div>
+                    </div>
+                    <button class="btn-buy" onclick="addToCart('Pacote Completo (16 Módulos)', 46.40)">🛒 COMPRAR PACOTE COMPLETO</button>
+                </div>
+
+                <!-- Guia de IA -->
+                <div class="package-card ia-guide">
+                    <div class="badge-ia">-25%</div>
+                    <div class="package-label">ACELERADOR DE RESULTADOS</div>
+                    <h3 class="package-title">O Guia de IA para Negócios</h3>
+                    <p class="package-desc">Descubra como impulsionar sua empresa usando Inteligência Artificial. Um guia prático e completo com 10 capítulos focados em aplicações reais de IA para vendas, marketing, atendimento e gestão.</p>
+                    
+                    <div class="highlights-box">
+                        <h4 class="highlights-title">Destaques desse módulo:</h4>
+                        <ul class="highlights-list">
+                            <li>10 capítulos práticos de IA para negócios</li>
+                            <li>Ferramentas e prompts prontos para usar</li>
+                            <li>Casos de uso e exemplos inspiradores</li>
+                            <li>Plano de implementação de 30 dias</li>
+                        </ul>
+                    </div>
+
+                    <div class="price-section">
+                        <span class="old-price">R$ 46,50</span>
+                        <div class="new-price">R$ 34,90</div>
+                    </div>
+                    <button class="btn-buy" onclick="addToCart('Guia de IA para Negócios', 34.90)">🛒 COMPRAR GUIA DE IA</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal do Carrinho -->
+    <div id="cart-modal" class="cart-modal">
+        <div class="cart-content">
+            <div class="cart-header">
+                <h3>Seu Carrinho</h3>
+                <span class="close-cart" onclick="toggleCart()">×</span>
+            </div>
+            <div id="cart-items-list" class="cart-items">
+                <!-- Itens do carrinho aqui -->
+            </div>
+            <div class="cart-total">
+                <span>Total:</span>
+                <span id="cart-total-value">R$ 0,00</span>
+            </div>
+            <button class="checkout-button" onclick="checkout()">Finalizar Compra</button>
+            <p style="text-align: center; font-size: 12px; color: #999; margin-top: 15px;">Pagamento seguro via Mercado Pago</p>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-logo-section">
+            <div class="logo"><img src="./assets/logo.jpg" alt="Logo"></div>
+            <div>
+                <h3>Alva Educação</h3>
+                <p>Transformando vendedores em especialistas de alto impacto.</p>
+            </div>
+        </div>
+        <div class="copyright">© 2026 Alva Educação - Aprimoramento em Vendas de Alto Impacto. Todos os direitos reservados.</div>
+        <div class="made-with">Made with Manus</div>
+    </footer>
+
+    <script>
+        let cart = JSON.parse(localStorage.getItem('alva_cart')) || [];
+
+        // Mapeamento de links do Mercado Pago
+        const paymentLinks = {
+            'O Segredo das Vendas de Alto Impacto': 'https://mpago.la/1yFBfUP',
+            'Construção de Relacionamentos': 'https://mpago.la/347zNUZ',
+            'Prospecção e Geração de Leads': 'https://mpago.la/1yP5uJa',
+            'Qualificação de Leads e Identificação de Necessidades': 'https://mpago.la/1XUpiD5',
+            'Construção de Propostas de Valor': 'https://mpago.la/2PTKBKL',
+            'Técnicas de Persuasão e Influência': 'https://mpago.la/1tgm2pP',
+            'Apresentação de Soluções e Demonstrações': 'https://mpago.la/2cuJPvR',
+            'Superação de Objeções': 'https://mpago.la/2nLVj5X',
+            'Técnicas de Fechamento': 'https://mpago.la/29njCE5',
+            'Negociação e Gestão de Contratos': 'https://mpago.la/2VHHaAZ',
+            'Follow-up e Pós-venda': 'https://mpago.la/2UUnEwo',
+            'Gestão de Pipeline e CRM': 'https://mpago.la/31sxc4G',
+            'Vendas Digitais e Redes Sociais': 'https://mpago.la/1pQioJX',
+            'Análise de Dados e Métricas': 'https://mpago.la/1RTYocx',
+            'Liderança em Vendas': 'https://mpago.la/1JUrFzU',
+            'Tendências Futuras e Inovação': 'https://mpago.la/2mN8N9E',
+            'Pacote Completo (16 Módulos)': 'https://mpago.la/2vtDMN7',
+            'Guia de IA para Negócios': 'https://mpago.la/2zMvsQS'
+        };
+
+        function switchTab(tab) {
+            document.getElementById('grid-individual').style.display = tab === 'individual' ? 'grid' : 'none';
+            document.getElementById('grid-complete').style.display = tab === 'complete' ? 'grid' : 'none';
+            document.getElementById('btn-individual').classList.toggle('active', tab === 'individual');
+            document.getElementById('btn-complete').classList.toggle('active', tab === 'complete');
+            document.getElementById('savings-msg').style.display = tab === 'complete' ? 'block' : 'none';
+        }
+
+        function addToCart(name, price) {
+            cart.push({ id: Date.now(), name, price });
+            localStorage.setItem('alva_cart', JSON.stringify(cart));
+            updateCartUI();
+            
+            // Feedback visual
+            const badge = document.getElementById('cart-badge');
+            badge.style.transform = 'scale(1.5)';
+            setTimeout(() => badge.style.transform = 'scale(1)', 200);
+            
+            // Abrir carrinho automaticamente ao adicionar
+            toggleCart();
+        }
+
+        function removeFromCart(id) {
+            cart = cart.filter(item => item.id !== id);
+            localStorage.setItem('alva_cart', JSON.stringify(cart));
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const badge = document.getElementById('cart-badge');
+            const list = document.getElementById('cart-items-list');
+            const totalSpan = document.getElementById('cart-total-value');
+            
+            badge.textContent = cart.length;
+            badge.style.display = cart.length > 0 ? 'block' : 'none';
+            
+            if (cart.length === 0) {
+                list.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">Seu carrinho está vazio.</p>';
+                totalSpan.textContent = 'R$ 0,00';
+            } else {
+                let total = 0;
+                list.innerHTML = cart.map(item => {
+                    total += item.price;
+                    return `
+                        <div class="cart-item">
+                            <div class="cart-item-info">
+                                <h4>${item.name}</h4>
+                                <p>R$ ${item.price.toFixed(2).replace('.', ',')}</p>
+                            </div>
+                            <span class="remove-item" onclick="removeFromCart(${item.id})">Remover</span>
+                        </div>
+                    `;
+                }).join('');
+                totalSpan.textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
+            }
+        }
+
+        function toggleCart() {
+            const modal = document.getElementById('cart-modal');
+            modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+        }
+
+        function checkout() {
+            if (cart.length === 0) {
+                alert("Seu carrinho está vazio!");
+                return;
+            }
+            
+            // Se houver apenas um item, vai direto para o link dele
+            if (cart.length === 1) {
+                const link = paymentLinks[cart[0].name];
+                if (link) {
+                    window.location.href = link;
+                } else {
+                    alert("Erro ao processar o link de pagamento.");
+                }
+            } else {
+                // Se houver múltiplos itens, o ideal seria um checkout de carrinho.
+                // Como estamos usando links diretos do MP, vamos sugerir o Pacote Completo
+                // ou avisar que o checkout múltiplo requer integração via API.
+                if (confirm("Para múltiplos itens, recomendamos o Pacote Completo com desconto. Deseja ir para o Pacote Completo?")) {
+                    window.location.href = paymentLinks['Pacote Completo (16 Módulos)'];
+                }
+            }
+        }
+
+        // Inicializar UI
+        updateCartUI();
+    </script>
+</body>
+</html>
