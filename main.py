@@ -1,11 +1,15 @@
-from flask import Flask, request, jsonify, send_from_directory
 import os
 import smtplib
+import requests
+from flask import Flask, request, jsonify, send_from_directory
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
 
 app = Flask(__name__, static_folder='.')
+
+# --- Configurações do Mercado Pago ---
+MP_ACCESS_TOKEN = "APP_USR-1698378827686338-020918-3eb43b92c8f40920f12aa6a2671b8c15-3187010530"
 
 # --- Configuração de E-mail ---
 SMTP_SERVER = "smtp.gmail.com"
@@ -52,6 +56,34 @@ PRODUCT_FILES = {
     "Alva - Guia IA para Negócios": ["modules/guia_ia_negocios.pdf"]
 }
 
+def send_email(customer_email, product_name, pdf_paths):
+    try:
+        msg = MIMEMultipart()
+        msg['From'] = SMTP_USER
+        msg['To'] = customer_email
+        msg['Subject'] = f"Seu acesso ao curso: {product_name}"
+
+        body = f"Olá!\n\nObrigado por adquirir o {product_name} da Alva Educação.\n\nEm anexo, você encontrará o seu material em PDF.\n\nBons estudos!\nEquipe Alva Educação"
+        msg.attach(MIMEText(body, 'plain'))
+
+        for path in pdf_paths:
+            if os.path.exists(path):
+                with open(path, "rb") as f:
+                    filename = os.path.basename(path)
+                    part = MIMEApplication(f.read(), Name=filename)
+                    part['Content-Disposition'] = f'attachment; filename="{filename}"'
+                    msg.attach(part)
+
+        server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
+        server.starttls()
+        server.login(SMTP_USER, SMTP_PASSWORD)
+        server.send_message(msg)
+        server.quit()
+        return True
+    except Exception as e:
+        print(f"Erro ao enviar e-mail: {e}")
+        return False
+
 # Rota principal
 @app.route('/')
 def index():
@@ -69,7 +101,31 @@ def static_files(path):
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
-    return jsonify({"status": "received"}), 200
+    data = request.json
+    if data and data.get("type") == "payment":
+        payment_id = data.get("data", {}).get("id")
+        if payment_id:
+            # Consultar o pagamento no Mercado Pago
+            url = f"https://api.mercadopago.com/v1/payments/{payment_id}"
+            headers = {"Authorization": f"Bearer {MP_ACCESS_TOKEN}"}
+            response = requests.get(url, headers=headers)
+            
+            if response.status_code == 200:
+                payment_info = response.json()
+                status = payment_info.get("status")
+                
+                if status == "approved":
+                    customer_email = payment_info.get("payer", {}).get("email")
+                    # Tentar pegar o nome do produto da descrição ou dos itens
+                    product_name = payment_info.get("description")
+                    if not product_name and payment_info.get("additional_info", {}).get("items"):
+                        product_name = payment_info["additional_info"]["items"][0].get("title")
+                    
+                    if customer_email and product_name in PRODUCT_FILES:
+                        pdf_paths = PRODUCT_FILES[product_name]
+                        send_email(customer_email, product_name, pdf_paths)
+                        
+    return jsonify({"status": "ok"}), 200
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
