@@ -22,26 +22,26 @@ SMTP_PORT = 587
 SMTP_USER = "alvaeducacao@gmail.com"
 SMTP_PASSWORD = "mwed wyhf xqbo dlyy"
 
-# --- Mapeamento de Arquivos PDF ---
+# --- Mapeamento de Arquivos PDF (Busca Flexível) ---
 PRODUCT_FILES = {
-    "Alva - Módulo 0: Segredo das Vendas": ["modulo_00_o_segredo_das_vendas_de_alto_impacto_revisado.pdf"],
-    "Alva - Módulo 1: Relacionamentos": ["modulo_1_construcao_relacionamentos_final_v7_final.pdf"],
-    "Alva - Módulo 2: Geração de Leads": ["modulo_2_prospeccao_e_geracao_de_leads.pdf"],
-    "Alva - Módulo 3: Qualificação Leads": ["modulo_3_qualificacao_e_necessidades.pdf"],
-    "Alva - Módulo 4: Propostas de Valor": ["modulo_4_propostas_de_valor_v2.pdf"],
-    "Alva - Módulo 5: Persuasão e Influência": ["modulo_5_persuasao_e_influencia_v3.pdf"],
-    "Alva - Módulo 6: Apresentação Soluções": ["modulo_6_apresentacao_e_demonstracoes.pdf"],
-    "Alva - Módulo 7: Superação Objeções": ["modulo_7_superacao_de_objecoes.pdf"],
-    "Alva - Módulo 8: Técnicas Fechamento": ["modulo_8_tecnicas_de_fechamento.pdf"],
-    "Alva - Módulo 9: Negociação Contratos": ["modulo_9_negociacao_e_gestao_de_contratos.pdf"],
-    "Alva - Módulo 10: Follow-up Pós-venda": ["modulo_10_follow_up_e_pos_venda.pdf"],
-    "Alva - Módulo 11: Gestão CRM": ["modulo_11_gestao_de_pipeline_e_crm_v2.pdf"],
-    "Alva - Módulo 12: Vendas Digitais": ["modulo_12_vendas_digitais_e_redes_sociais_revisado.pdf"],
-    "Alva - Módulo 13: Análise de Dados": ["modulo_13_analise_de_dados_e_metricas_revisado.pdf"],
-    "Alva - Módulo 14: Liderança Vendas": ["modulo_14_lideranca_em_vendas_revisado.pdf"],
-    "Alva - Módulo 15: Tendências e IA": ["modulo_15_tendencias_futuras_e_inovacao.pdf"],
-    "Alva - Pacote Completo (16 Módulos)": ["Alva_Educacao_Pacote_Completo.pdf"],
-    "Alva - Guia IA para Negócios": ["guia_ia_negocios.pdf"]
+    "Módulo 0": ["modulo_00_o_segredo_das_vendas_de_alto_impacto_revisado.pdf"],
+    "Módulo 1": ["modulo_1_construcao_relacionamentos_final_v7_final.pdf"],
+    "Módulo 2": ["modulo_2_prospeccao_e_geracao_de_leads.pdf"],
+    "Módulo 3": ["modulo_3_qualificacao_e_necessidades.pdf"],
+    "Módulo 4": ["modulo_4_propostas_de_valor_v2.pdf"],
+    "Módulo 5": ["modulo_5_persuasao_e_influencia_v3.pdf"],
+    "Módulo 6": ["modulo_6_apresentacao_e_demonstracoes.pdf"],
+    "Módulo 7": ["modulo_7_superacao_de_objecoes.pdf"],
+    "Módulo 8": ["modulo_8_tecnicas_de_fechamento.pdf"],
+    "Módulo 9": ["modulo_9_negociacao_e_gestao_de_contratos.pdf"],
+    "Módulo 10": ["modulo_10_follow_up_e_pos_venda.pdf"],
+    "Módulo 11": ["modulo_11_gestao_de_pipeline_e_crm_v2.pdf"],
+    "Módulo 12": ["modulo_12_vendas_digitais_e_redes_sociais_revisado.pdf"],
+    "Módulo 13": ["modulo_13_analise_de_dados_e_metricas_revisado.pdf"],
+    "Módulo 14": ["modulo_14_lideranca_em_vendas_revisado.pdf"],
+    "Módulo 15": ["modulo_15_tendencias_futuras_e_inovacao.pdf"],
+    "Pacote Completo": ["Alva_Educacao_Pacote_Completo.pdf"],
+    "Guia IA": ["guia_ia_negocios.pdf"]
 }
 
 def send_email(customer_email, product_name, pdf_paths):
@@ -58,6 +58,7 @@ def send_email(customer_email, product_name, pdf_paths):
 
         files_attached = 0
         for path in pdf_paths:
+            # Tenta encontrar o arquivo na raiz ou na pasta modules
             actual_path = path
             if not os.path.exists(actual_path):
                 actual_path = os.path.join("modules", path)
@@ -71,7 +72,7 @@ def send_email(customer_email, product_name, pdf_paths):
                     files_attached += 1
                     logger.info(f"Arquivo anexado: {filename}")
             else:
-                logger.error(f"Arquivo NÃO encontrado: {path}")
+                logger.error(f"Arquivo NÃO encontrado: {actual_path}")
 
         if files_attached == 0:
             logger.error("Nenhum arquivo foi anexado. O e-mail não será enviado.")
@@ -119,18 +120,25 @@ def webhook():
                     
                     if status == "approved":
                         customer_email = payment_info.get("payer", {}).get("email")
-                        product_name = payment_info.get("description")
-                        if not product_name and payment_info.get("additional_info", {}).get("items"):
-                            product_name = payment_info["additional_info"]["items"][0].get("title")
+                        # Pega a descrição do Mercado Pago
+                        mp_description = payment_info.get("description", "")
+                        if not mp_description and payment_info.get("additional_info", {}).get("items"):
+                            mp_description = payment_info["additional_info"]["items"][0].get("title", "")
                         
-                        logger.info(f"Pagamento aprovado. Cliente: {customer_email}, Produto: {product_name}")
+                        logger.info(f"Pagamento aprovado. Cliente: {customer_email}, Descrição MP: {mp_description}")
                         
-                        if customer_email and product_name in PRODUCT_FILES:
-                            pdf_paths = PRODUCT_FILES[product_name]
-                            # CORREÇÃO: Passando todos os argumentos necessários
-                            send_email(customer_email, product_name, pdf_paths)
+                        # Busca flexível: verifica se algum termo do nosso dicionário está na descrição do MP
+                        found_product = None
+                        for key in PRODUCT_FILES:
+                            if key.lower() in mp_description.lower():
+                                found_product = key
+                                break
+                        
+                        if customer_email and found_product:
+                            pdf_paths = PRODUCT_FILES[found_product]
+                            send_email(customer_email, mp_description, pdf_paths)
                         else:
-                            logger.warning(f"Produto '{product_name}' não mapeado ou e-mail ausente.")
+                            logger.warning(f"Nenhum produto correspondente encontrado para: {mp_description}")
                 else:
                     logger.error(f"Erro ao consultar Mercado Pago: {response.status_code}")
             except Exception as e:
