@@ -52,7 +52,6 @@ def send_email(customer_email, product_name, pdf_paths):
         msg['To'] = customer_email
         msg['Subject'] = f"Seu acesso ao curso: {product_name}"
 
-        # MENSAGEM PERSONALIZADA PELO USUÁRIO
         body = f"Olá,\n\nMuito obrigado pela sua compra na Alva Educação! Estamos muito felizes em ter você conosco.\n\nSeu acesso ao curso {product_name} está disponível. Anexado a este e-mail, você encontrará o material completo em formato PDF.\n\nEsperamos que este conteúdo seja um diferencial em sua jornada e traga resultados incríveis para você.\n\nSe tiver qualquer dúvida ou precisar de suporte, não hesite em nos contatar. Estamos à disposição para ajudar!\n\nAtenciosamente,\nEquipe Alva Educação\nwww.alvaeducacao.com.br"
         
         msg.attach(MIMEText(body, 'plain'))
@@ -124,9 +123,16 @@ def webhook():
                         if not product_name and payment_info.get("additional_info", {}).get("items"):
                             product_name = payment_info["additional_info"]["items"][0].get("title")
                         
+                        logger.info(f"Pagamento aprovado. Cliente: {customer_email}, Produto: {product_name}")
+                        
                         if customer_email and product_name in PRODUCT_FILES:
                             pdf_paths = PRODUCT_FILES[product_name]
+                            # CORREÇÃO: Passando todos os argumentos necessários
                             send_email(customer_email, product_name, pdf_paths)
+                        else:
+                            logger.warning(f"Produto '{product_name}' não mapeado ou e-mail ausente.")
+                else:
+                    logger.error(f"Erro ao consultar Mercado Pago: {response.status_code}")
             except Exception as e:
                 logger.error(f"Erro no processamento do webhook: {e}")
                         
