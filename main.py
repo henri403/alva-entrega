@@ -16,14 +16,13 @@ app = Flask(__name__, static_folder='.')
 # --- Configurações do Mercado Pago ---
 MP_ACCESS_TOKEN = "APP_USR-1698378827686338-020918-3eb43b92c8f40920f12aa6a2671b8c15-3187010530"
 
-# --- Configuração de E-mail (ATUALIZADO) ---
+# --- Configuração de E-mail ---
 SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 587
 SMTP_USER = "alvaeducacao@gmail.com"
 SMTP_PASSWORD = "mwed wyhf xqbo dlyy"
 
-# --- Mapeamento de Arquivos PDF (CAMINHOS CORRIGIDOS) ---
-# Removido o prefixo 'modules/' pois os arquivos estão na raiz ou pasta principal no Render
+# --- Mapeamento de Arquivos PDF ---
 PRODUCT_FILES = {
     "Alva - Módulo 0: Segredo das Vendas": ["modulo_00_o_segredo_das_vendas_de_alto_impacto_revisado.pdf"],
     "Alva - Módulo 1: Relacionamentos": ["modulo_1_construcao_relacionamentos_final_v7_final.pdf"],
@@ -53,12 +52,13 @@ def send_email(customer_email, product_name, pdf_paths):
         msg['To'] = customer_email
         msg['Subject'] = f"Seu acesso ao curso: {product_name}"
 
-        body = f"Olá!\n\nMuito obrigado por adquirir o {product_name} da Alva Educação.\n\nEm anexo, você encontrará o seu material em PDF.\n\nEsperamos que este conteúdo ajude você a alcançar resultados incríveis!\n\nBons estudos!\nEquipe Alva Educação\nwww.alvaeducacao.com.br"
+        # MENSAGEM PERSONALIZADA PELO USUÁRIO
+        body = f"Olá,\n\nMuito obrigado pela sua compra na Alva Educação! Estamos muito felizes em ter você conosco.\n\nSeu acesso ao curso {product_name} está disponível. Anexado a este e-mail, você encontrará o material completo em formato PDF.\n\nEsperamos que este conteúdo seja um diferencial em sua jornada e traga resultados incríveis para você.\n\nSe tiver qualquer dúvida ou precisar de suporte, não hesite em nos contatar. Estamos à disposição para ajudar!\n\nAtenciosamente,\nEquipe Alva Educação\nwww.alvaeducacao.com.br"
+        
         msg.attach(MIMEText(body, 'plain'))
 
         files_attached = 0
         for path in pdf_paths:
-            # Tenta encontrar o arquivo na raiz ou na pasta modules
             actual_path = path
             if not os.path.exists(actual_path):
                 actual_path = os.path.join("modules", path)
@@ -72,7 +72,7 @@ def send_email(customer_email, product_name, pdf_paths):
                     files_attached += 1
                     logger.info(f"Arquivo anexado: {filename}")
             else:
-                logger.error(f"Arquivo NÃO encontrado: {path} ou modules/{path}")
+                logger.error(f"Arquivo NÃO encontrado: {path}")
 
         if files_attached == 0:
             logger.error("Nenhum arquivo foi anexado. O e-mail não será enviado.")
@@ -89,17 +89,14 @@ def send_email(customer_email, product_name, pdf_paths):
         logger.error(f"Erro ao enviar e-mail: {e}")
         return False
 
-# Rota principal
 @app.route('/')
 def index():
     return send_from_directory('.', 'index.html')
 
-# Rota para arquivos na pasta assets (Logos, etc)
 @app.route('/assets/<path:filename>')
 def serve_assets(filename):
     return send_from_directory('assets', filename)
 
-# Rota para outros arquivos na raiz
 @app.route('/<path:path>')
 def static_files(path):
     return send_from_directory('.', path)
@@ -112,7 +109,6 @@ def webhook():
     if data and data.get("type") == "payment":
         payment_id = data.get("data", {}).get("id")
         if payment_id:
-            logger.info(f"Processando pagamento ID: {payment_id}")
             url = f"https://api.mercadopago.com/v1/payments/{payment_id}"
             headers = {"Authorization": f"Bearer {MP_ACCESS_TOKEN}"}
             
@@ -121,29 +117,16 @@ def webhook():
                 if response.status_code == 200:
                     payment_info = response.json()
                     status = payment_info.get("status")
-                    logger.info(f"Status do pagamento {payment_id}: {status}")
                     
                     if status == "approved":
                         customer_email = payment_info.get("payer", {}).get("email")
-                        
-                        # Tenta pegar o nome do produto da descrição ou dos itens
                         product_name = payment_info.get("description")
                         if not product_name and payment_info.get("additional_info", {}).get("items"):
                             product_name = payment_info["additional_info"]["items"][0].get("title")
                         
-                        logger.info(f"Cliente: {customer_email}, Produto: {product_name}")
-                        
                         if customer_email and product_name in PRODUCT_FILES:
                             pdf_paths = PRODUCT_FILES[product_name]
-                            success = send_email(customer_email, product_name, pdf_paths)
-                            if success:
-                                logger.info("Processo de entrega concluído com sucesso.")
-                            else:
-                                logger.error("Falha no envio do e-mail.")
-                        else:
-                            logger.warning(f"Produto '{product_name}' não mapeado ou e-mail ausente.")
-                else:
-                    logger.error(f"Erro ao consultar Mercado Pago: {response.status_code}")
+                            send_email(customer_email, product_name, pdf_paths)
             except Exception as e:
                 logger.error(f"Erro no processamento do webhook: {e}")
                         
