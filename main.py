@@ -15,11 +15,11 @@ app = Flask(__name__, static_folder='.')
 # --- Configurações do Mercado Pago ---
 MP_ACCESS_TOKEN = "APP_USR-1698378827686338-020918-3eb43b92c8f40920f12aa6a2671b8c15-3187010530"
 
-# --- Configuração do Resend (ENVIO PROFISSIONAL COM DOMÍNIO VERIFICADO) ---
+# --- Configuração do Resend (DOMÍNIO VERIFICADO) ---
 RESEND_API_KEY = "re_YcNaqCdZ_JEcKbM9gJx7fa9uoHqPbsKq4"
-# Agora usamos o domínio verificado para o envio
-EMAIL_FROM = "Alva Educação <entrega@alvaeducacao.com.br>" 
-# Respostas dos clientes vão para o seu Gmail
+# Usando o domínio verificado. O Resend permite 'criar' qualquer nome antes do @
+EMAIL_FROM = "Alva Educação <contato@alvaeducacao.com.br>" 
+# IMPORTANTE: Respostas dos clientes vão para o seu Gmail real
 EMAIL_TO_REPLY = "alvaeducacao@gmail.com"
 
 # --- Mapeamento de Arquivos PDF ---
