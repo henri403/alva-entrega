@@ -2,12 +2,14 @@ import os
 import smtplib
 import requests
 import logging
+import re
+import unicodedata
 from flask import Flask, request, jsonify, send_from_directory
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
 
-# Configuração de Logs para facilitar o diagnóstico no Render
+# Configuração de Logs
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -22,27 +24,34 @@ SMTP_PORT = 587
 SMTP_USER = "alvaeducacao@gmail.com"
 SMTP_PASSWORD = "mwed wyhf xqbo dlyy"
 
-# --- Mapeamento de Arquivos PDF (Busca Flexível) ---
+# --- Mapeamento de Arquivos PDF ---
 PRODUCT_FILES = {
-    "Módulo 0": ["modulo_00_o_segredo_das_vendas_de_alto_impacto_revisado.pdf"],
-    "Módulo 1": ["modulo_1_construcao_relacionamentos_final_v7_final.pdf"],
-    "Módulo 2": ["modulo_2_prospeccao_e_geracao_de_leads.pdf"],
-    "Módulo 3": ["modulo_3_qualificacao_e_necessidades.pdf"],
-    "Módulo 4": ["modulo_4_propostas_de_valor_v2.pdf"],
-    "Módulo 5": ["modulo_5_persuasao_e_influencia_v3.pdf"],
-    "Módulo 6": ["modulo_6_apresentacao_e_demonstracoes.pdf"],
-    "Módulo 7": ["modulo_7_superacao_de_objecoes.pdf"],
-    "Módulo 8": ["modulo_8_tecnicas_de_fechamento.pdf"],
-    "Módulo 9": ["modulo_9_negociacao_e_gestao_de_contratos.pdf"],
-    "Módulo 10": ["modulo_10_follow_up_e_pos_venda.pdf"],
-    "Módulo 11": ["modulo_11_gestao_de_pipeline_e_crm_v2.pdf"],
-    "Módulo 12": ["modulo_12_vendas_digitais_e_redes_sociais_revisado.pdf"],
-    "Módulo 13": ["modulo_13_analise_de_dados_e_metricas_revisado.pdf"],
-    "Módulo 14": ["modulo_14_lideranca_em_vendas_revisado.pdf"],
-    "Módulo 15": ["modulo_15_tendencias_futuras_e_inovacao.pdf"],
-    "Pacote Completo": ["Alva_Educacao_Pacote_Completo.pdf"],
-    "Guia IA": ["guia_ia_negocios.pdf"]
+    "modulo 0": ["modulo_00_o_segredo_das_vendas_de_alto_impacto_revisado.pdf"],
+    "modulo 1": ["modulo_1_construcao_relacionamentos_final_v7_final.pdf"],
+    "modulo 2": ["modulo_2_prospeccao_e_geracao_de_leads.pdf"],
+    "modulo 3": ["modulo_3_qualificacao_e_necessidades.pdf"],
+    "modulo 4": ["modulo_4_propostas_de_valor_v2.pdf"],
+    "modulo 5": ["modulo_5_persuasao_e_influencia_v3.pdf"],
+    "modulo 6": ["modulo_6_apresentacao_e_demonstracoes.pdf"],
+    "modulo 7": ["modulo_7_superacao_de_objecoes.pdf"],
+    "modulo 8": ["modulo_8_tecnicas_de_fechamento.pdf"],
+    "modulo 9": ["modulo_9_negociacao_e_gestao_de_contratos.pdf"],
+    "modulo 10": ["modulo_10_follow_up_e_pos_venda.pdf"],
+    "modulo 11": ["modulo_11_gestao_de_pipeline_e_crm_v2.pdf"],
+    "modulo 12": ["modulo_12_vendas_digitais_e_redes_sociais_revisado.pdf"],
+    "modulo 13": ["modulo_13_analise_de_dados_e_metricas_revisado.pdf"],
+    "modulo 14": ["modulo_14_lideranca_em_vendas_revisado.pdf"],
+    "modulo 15": ["modulo_15_tendencias_futuras_e_inovacao.pdf"],
+    "pacote completo": ["Alva_Educacao_Pacote_Completo.pdf"],
+    "guia ia": ["guia_ia_negocios.pdf"]
 }
+
+def normalize_text(text):
+    """Remove acentos e converte para minúsculas."""
+    if not text: return ""
+    text = unicodedata.normalize('NFD', text)
+    text = text.encode('ascii', 'ignore').decode("utf-8")
+    return text.lower()
 
 def send_email(customer_email, product_name, pdf_paths):
     try:
@@ -58,7 +67,6 @@ def send_email(customer_email, product_name, pdf_paths):
 
         files_attached = 0
         for path in pdf_paths:
-            # Tenta encontrar o arquivo na raiz ou na pasta modules
             actual_path = path
             if not os.path.exists(actual_path):
                 actual_path = os.path.join("modules", path)
@@ -89,6 +97,37 @@ def send_email(customer_email, product_name, pdf_paths):
         logger.error(f"Erro ao enviar e-mail: {e}")
         return False
 
+def process_payment(payment_id):
+    url = f"https://api.mercadopago.com/v1/payments/{payment_id}"
+    headers = {"Authorization": f"Bearer {MP_ACCESS_TOKEN}"}
+    try:
+        response = requests.get(url, headers=headers)
+        if response.status_code == 200:
+            payment_info = response.json()
+            if payment_info.get("status") == "approved":
+                customer_email = payment_info.get("payer", {}).get("email")
+                description = payment_info.get("description", "")
+                if not description and payment_info.get("additional_info", {}).get("items"):
+                    description = payment_info["additional_info"]["items"][0].get("title", "")
+                
+                logger.info(f"Pagamento aprovado. Cliente: {customer_email}, Descrição: {description}")
+                
+                norm_desc = normalize_text(description)
+                found_product = None
+                for key in PRODUCT_FILES:
+                    if key in norm_desc:
+                        found_product = key
+                        break
+                
+                if customer_email and found_product:
+                    send_email(customer_email, description, PRODUCT_FILES[found_product])
+                else:
+                    logger.warning(f"Produto não mapeado: {description}")
+        else:
+            logger.error(f"Erro MP {payment_id}: {response.status_code}")
+    except Exception as e:
+        logger.error(f"Erro process_payment: {e}")
+
 @app.route('/')
 def index():
     return send_from_directory('.', 'index.html')
@@ -106,44 +145,31 @@ def webhook():
     data = request.json
     logger.info(f"Webhook recebido: {data}")
     
-    if data and data.get("type") == "payment":
+    if not data:
+        return jsonify({"status": "error"}), 400
+
+    # Caso 1: Notificação direta de pagamento
+    if data.get("type") == "payment":
         payment_id = data.get("data", {}).get("id")
         if payment_id:
-            url = f"https://api.mercadopago.com/v1/payments/{payment_id}"
+            process_payment(payment_id)
+
+    # Caso 2: Notificação de Merchant Order (Ordem de Mercante)
+    elif data.get("type") in ["merchant_order", "topic_merchant_order_wh"]:
+        order_id = data.get("data", {}).get("id") or data.get("id")
+        if order_id:
+            url = f"https://api.mercadopago.com/merchant_orders/{order_id}"
             headers = {"Authorization": f"Bearer {MP_ACCESS_TOKEN}"}
-            
             try:
                 response = requests.get(url, headers=headers)
                 if response.status_code == 200:
-                    payment_info = response.json()
-                    status = payment_info.get("status")
-                    
-                    if status == "approved":
-                        customer_email = payment_info.get("payer", {}).get("email")
-                        # Pega a descrição do Mercado Pago
-                        mp_description = payment_info.get("description", "")
-                        if not mp_description and payment_info.get("additional_info", {}).get("items"):
-                            mp_description = payment_info["additional_info"]["items"][0].get("title", "")
-                        
-                        logger.info(f"Pagamento aprovado. Cliente: {customer_email}, Descrição MP: {mp_description}")
-                        
-                        # Busca flexível: verifica se algum termo do nosso dicionário está na descrição do MP
-                        found_product = None
-                        for key in PRODUCT_FILES:
-                            if key.lower() in mp_description.lower():
-                                found_product = key
-                                break
-                        
-                        if customer_email and found_product:
-                            pdf_paths = PRODUCT_FILES[found_product]
-                            send_email(customer_email, mp_description, pdf_paths)
-                        else:
-                            logger.warning(f"Nenhum produto correspondente encontrado para: {mp_description}")
-                else:
-                    logger.error(f"Erro ao consultar Mercado Pago: {response.status_code}")
+                    order_info = response.json()
+                    for payment in order_info.get("payments", []):
+                        if payment.get("status") == "approved":
+                            process_payment(payment.get("id"))
             except Exception as e:
-                logger.error(f"Erro no processamento do webhook: {e}")
-                        
+                logger.error(f"Erro merchant_order: {e}")
+
     return jsonify({"status": "ok"}), 200
 
 if __name__ == '__main__':
