@@ -1,12 +1,9 @@
 import os
-import smtplib
 import requests
 import logging
 import unicodedata
+import base64
 from flask import Flask, request, jsonify, send_from_directory
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from email.mime.application import MIMEApplication
 
 # Configuração de Logs
 logging.basicConfig(level=logging.INFO)
@@ -17,11 +14,12 @@ app = Flask(__name__, static_folder='.')
 # --- Configurações do Mercado Pago ---
 MP_ACCESS_TOKEN = "APP_USR-1698378827686338-020918-3eb43b92c8f40920f12aa6a2671b8c15-3187010530"
 
-# --- Configuração de E-mail (USANDO SSL PORTA 465) ---
-SMTP_SERVER = "smtp.gmail.com"
-SMTP_PORT = 465
-SMTP_USER = "alvaeducacao@gmail.com"
-SMTP_PASSWORD = "iavg dzke sxpi ufcu"
+# --- Configuração do Resend (ENVIO PROFISSIONAL) ---
+RESEND_API_KEY = "re_YcNaqCdZ_JEcKbM9gJx7fa9uoHqPbsKq4"
+# Nota: O Resend exige que o remetente seja verificado. 
+# Por padrão, usaremos o domínio do Resend para garantir o envio imediato.
+EMAIL_FROM = "Alva Educação <onboarding@resend.dev>" 
+EMAIL_TO_REPLY = "alvaeducacao@gmail.com"
 
 # --- Mapeamento de Arquivos PDF ---
 PRODUCT_FILES = {
@@ -51,19 +49,11 @@ def normalize_text(text):
     text = text.encode('ascii', 'ignore').decode("utf-8")
     return text.lower()
 
-def send_email(customer_email, product_name, pdf_paths):
+def send_email_resend(customer_email, product_name, pdf_paths):
     try:
-        logger.info(f"Iniciando envio de e-mail para {customer_email} - Produto: {product_name}")
-        msg = MIMEMultipart()
-        msg['From'] = f"Alva Educação <{SMTP_USER}>"
-        msg['To'] = customer_email
-        msg['Subject'] = f"Seu acesso ao curso: {product_name}"
-
-        body = f"Olá,\n\nMuito obrigado pela sua compra na Alva Educação! Estamos muito felizes em ter você conosco.\n\nSeu acesso ao curso {product_name} está disponível. Anexado a este e-mail, você encontrará o material completo em formato PDF.\n\nEsperamos que este conteúdo seja um diferencial em sua jornada e traga resultados incríveis para você.\n\nSe tiver qualquer dúvida ou precisar de suporte, não hesite em nos contatar. Estamos à disposição para ajudar!\n\nAtenciosamente,\nEquipe Alva Educação\nwww.alvaeducacao.com.br"
+        logger.info(f"Iniciando envio via Resend para {customer_email} - Produto: {product_name}")
         
-        msg.attach(MIMEText(body, 'plain'))
-
-        files_attached = 0
+        attachments = []
         for path in pdf_paths:
             actual_path = path
             if not os.path.exists(actual_path):
@@ -71,28 +61,57 @@ def send_email(customer_email, product_name, pdf_paths):
             
             if os.path.exists(actual_path):
                 with open(actual_path, "rb") as f:
-                    filename = os.path.basename(actual_path)
-                    part = MIMEApplication(f.read(), Name=filename)
-                    part['Content-Disposition'] = f'attachment; filename="{filename}"'
-                    msg.attach(part)
-                    files_attached += 1
-                    logger.info(f"Arquivo anexado: {filename}")
+                    content = base64.b64encode(f.read()).decode()
+                    attachments.append({
+                        "content": content,
+                        "filename": os.path.basename(actual_path)
+                    })
+                    logger.info(f"Arquivo preparado para anexo: {os.path.basename(actual_path)}")
             else:
                 logger.error(f"Arquivo NÃO encontrado: {actual_path}")
 
-        if files_attached == 0:
-            logger.error("Nenhum arquivo foi anexado. O e-mail não será enviado.")
+        if not attachments:
+            logger.error("Nenhum arquivo encontrado para anexar. Abortando envio.")
             return False
 
-        logger.info("Conectando ao servidor SMTP via SSL...")
-        server = smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT, timeout=30)
-        server.login(SMTP_USER, SMTP_PASSWORD)
-        server.send_message(msg)
-        server.quit()
-        logger.info(f"E-mail enviado com sucesso para {customer_email}")
-        return True
+        email_body = f"""
+        <html>
+        <body>
+            <p>Olá,</p>
+            <p>Muito obrigado pela sua compra na <strong>Alva Educação</strong>! Estamos muito felizes em ter você conosco.</p>
+            <p>Seu acesso ao curso <strong>{product_name}</strong> está disponível. Anexado a este e-mail, você encontrará o material completo em formato PDF.</p>
+            <p>Esperamos que este conteúdo seja um diferencial em sua jornada e traga resultados incríveis para você.</p>
+            <p>Se tiver qualquer dúvida ou precisar de suporte, não hesite em nos contatar em {EMAIL_TO_REPLY}. Estamos à disposição para ajudar!</p>
+            <p>Atenciosamente,<br>Equipe Alva Educação<br><a href="https://www.alvaeducacao.com.br">www.alvaeducacao.com.br</a></p>
+        </body>
+        </html>
+        """
+
+        payload = {
+            "from": EMAIL_FROM,
+            "to": customer_email,
+            "subject": f"Seu acesso ao curso: {product_name}",
+            "html": email_body,
+            "reply_to": EMAIL_TO_REPLY,
+            "attachments": attachments
+        }
+
+        headers = {
+            "Authorization": f"Bearer {RESEND_API_KEY}",
+            "Content-Type": "application/json"
+        }
+
+        response = requests.post("https://api.resend.com/emails", json=payload, headers=headers)
+        
+        if response.status_code in [200, 201]:
+            logger.info(f"E-mail enviado com sucesso via Resend para {customer_email}")
+            return True
+        else:
+            logger.error(f"Erro ao enviar via Resend: {response.status_code} - {response.text}")
+            return False
+
     except Exception as e:
-        logger.error(f"Erro ao enviar e-mail: {e}")
+        logger.error(f"Erro na função send_email_resend: {e}")
         return False
 
 def process_payment(payment_id):
@@ -118,9 +137,9 @@ def process_payment(payment_id):
                         break
                 
                 if customer_email and found_product:
-                    send_email(customer_email, description, PRODUCT_FILES[found_product])
+                    send_email_resend(customer_email, description, PRODUCT_FILES[found_product])
                 else:
-                    logger.warning(f"Produto não mapeado: {description}")
+                    logger.warning(f"Produto não mapeado ou e-mail ausente: {description}")
         else:
             logger.error(f"Erro MP {payment_id}: {response.status_code}")
     except Exception as e:
