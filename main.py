@@ -15,11 +15,9 @@ app = Flask(__name__, static_folder='.')
 # --- Configurações do Mercado Pago ---
 MP_ACCESS_TOKEN = "APP_USR-1698378827686338-020918-3eb43b92c8f40920f12aa6a2671b8c15-3187010530"
 
-# --- Configuração do Resend (DOMÍNIO VERIFICADO) ---
+# --- Configuração do Resend ---
 RESEND_API_KEY = "re_YcNaqCdZ_JEcKbM9gJx7fa9uoHqPbsKq4"
-# Usando o domínio verificado. O Resend permite 'criar' qualquer nome antes do @
 EMAIL_FROM = "Alva Educação <contato@alvaeducacao.com.br>" 
-# IMPORTANTE: Respostas dos clientes vão para o seu Gmail real
 EMAIL_TO_REPLY = "alvaeducacao@gmail.com"
 
 # --- Mapeamento de Arquivos PDF ---
@@ -52,6 +50,9 @@ def normalize_text(text):
 
 def is_valid_email(email):
     if not email: return False
+    # Filtra e-mails de teste ou mascarados
+    if "XXXXXXXXXXX" in email or "test_user" in email:
+        return False
     return re.match(r"[^@]+@[^@]+\.[^@]+", email) is not None
 
 def send_email_resend(customer_email, product_name, pdf_paths):
@@ -75,12 +76,11 @@ def send_email_resend(customer_email, product_name, pdf_paths):
                         "content": content,
                         "filename": os.path.basename(actual_path)
                     })
-                    logger.info(f"Arquivo preparado para anexo: {os.path.basename(actual_path)}")
             else:
                 logger.error(f"Arquivo NÃO encontrado: {actual_path}")
 
         if not attachments:
-            logger.error("Nenhum arquivo encontrado para anexar. Abortando envio.")
+            logger.error("Nenhum arquivo encontrado para anexar.")
             return False
 
         email_body = f"""
@@ -88,12 +88,11 @@ def send_email_resend(customer_email, product_name, pdf_paths):
         <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
             <div style="max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
                 <h2 style="color: #2c3e50;">Olá!</h2>
-                <p>Muito obrigado pela sua compra na <strong>Alva Educação</strong>! Estamos muito felizes em ter você conosco.</p>
+                <p>Muito obrigado pela sua compra na <strong>Alva Educação</strong>!</p>
                 <p>Seu acesso ao curso <strong>{product_name}</strong> está disponível. Anexado a este e-mail, você encontrará o material completo em formato PDF.</p>
-                <p>Esperamos que este conteúdo seja um diferencial em sua jornada e traga resultados incríveis para você.</p>
                 <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
-                <p style="font-size: 0.9em;">Se tiver qualquer dúvida ou precisar de suporte, basta responder a este e-mail ou nos contatar em <strong>{EMAIL_TO_REPLY}</strong>.</p>
-                <p>Atenciosamente,<br><strong>Equipe Alva Educação</strong><br><a href="https://www.alvaeducacao.com.br" style="color: #3498db; text-decoration: none;">www.alvaeducacao.com.br</a></p>
+                <p style="font-size: 0.9em;">Se tiver qualquer dúvida, responda a este e-mail ou nos contate em <strong>{EMAIL_TO_REPLY}</strong>.</p>
+                <p>Atenciosamente,<br><strong>Equipe Alva Educação</strong></p>
             </div>
         </body>
         </html>
@@ -108,22 +107,17 @@ def send_email_resend(customer_email, product_name, pdf_paths):
             "attachments": attachments
         }
 
-        headers = {
-            "Authorization": f"Bearer {RESEND_API_KEY}",
-            "Content-Type": "application/json"
-        }
-
+        headers = {"Authorization": f"Bearer {RESEND_API_KEY}", "Content-Type": "application/json"}
         response = requests.post("https://api.resend.com/emails", json=payload, headers=headers)
         
         if response.status_code in [200, 201]:
-            logger.info(f"E-mail enviado com sucesso via Resend para {customer_email}")
+            logger.info(f"E-mail enviado com sucesso para {customer_email}")
             return True
         else:
-            logger.error(f"Erro ao enviar via Resend: {response.status_code} - {response.text}")
+            logger.error(f"Erro Resend: {response.status_code} - {response.text}")
             return False
-
     except Exception as e:
-        logger.error(f"Erro na função send_email_resend: {e}")
+        logger.error(f"Erro send_email_resend: {e}")
         return False
 
 def process_payment(payment_id):
@@ -134,12 +128,18 @@ def process_payment(payment_id):
         if response.status_code == 200:
             payment_info = response.json()
             if payment_info.get("status") == "approved":
+                # Tenta pegar o e-mail de vários lugares possíveis no JSON do MP
                 customer_email = payment_info.get("payer", {}).get("email")
+                
+                # Se o e-mail for mascarado ou ausente, tenta buscar no 'additional_info'
+                if not is_valid_email(customer_email):
+                    customer_email = payment_info.get("additional_info", {}).get("payer", {}).get("email")
+                
                 description = payment_info.get("description", "")
                 if not description and payment_info.get("additional_info", {}).get("items"):
                     description = payment_info["additional_info"]["items"][0].get("title", "")
                 
-                logger.info(f"Pagamento aprovado. Cliente: {customer_email}, Descrição: {description}")
+                logger.info(f"Pagamento {payment_id} aprovado. E-mail encontrado: {customer_email}")
                 
                 norm_desc = normalize_text(description)
                 found_product = None
@@ -148,26 +148,18 @@ def process_payment(payment_id):
                         found_product = key
                         break
                 
-                if customer_email and found_product:
+                if is_valid_email(customer_email) and found_product:
                     send_email_resend(customer_email, description, PRODUCT_FILES[found_product])
                 else:
-                    logger.warning(f"Produto não mapeado ou e-mail ausente: {description}")
+                    logger.warning(f"Falha ao processar: E-mail={customer_email}, Produto={found_product}")
         else:
-            logger.error(f"Erro MP {payment_id}: {response.status_code}")
+            logger.error(f"Erro ao buscar pagamento {payment_id}: {response.status_code}")
     except Exception as e:
         logger.error(f"Erro process_payment: {e}")
 
 @app.route('/')
 def index():
     return send_from_directory('.', 'index.html')
-
-@app.route('/assets/<path:filename>')
-def serve_assets(filename):
-    return send_from_directory('assets', filename)
-
-@app.route('/<path:path>')
-def static_files(path):
-    return send_from_directory('.', path)
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
@@ -177,10 +169,13 @@ def webhook():
     if not data:
         return jsonify({"status": "error"}), 400
 
+    # Se for notificação de pagamento direto
     if data.get("type") == "payment":
         payment_id = data.get("data", {}).get("id")
         if payment_id:
             process_payment(payment_id)
+            
+    # Se for notificação de ordem (comum no MP)
     elif data.get("type") in ["merchant_order", "topic_merchant_order_wh"]:
         order_id = data.get("data", {}).get("id") or data.get("id")
         if order_id:
@@ -190,11 +185,12 @@ def webhook():
                 response = requests.get(url, headers=headers)
                 if response.status_code == 200:
                     order_info = response.json()
+                    # Varre todos os pagamentos da ordem em busca do aprovado
                     for payment in order_info.get("payments", []):
                         if payment.get("status") == "approved":
                             process_payment(payment.get("id"))
             except Exception as e:
-                logger.error(f"Erro merchant_order: {e}")
+                logger.error(f"Erro ao buscar ordem {order_id}: {e}")
 
     return jsonify({"status": "ok"}), 200
 
