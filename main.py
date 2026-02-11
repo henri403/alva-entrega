@@ -3,6 +3,7 @@ import requests
 import logging
 import unicodedata
 import base64
+import re
 from flask import Flask, request, jsonify, send_from_directory
 
 # Configuração de Logs
@@ -14,11 +15,11 @@ app = Flask(__name__, static_folder='.')
 # --- Configurações do Mercado Pago ---
 MP_ACCESS_TOKEN = "APP_USR-1698378827686338-020918-3eb43b92c8f40920f12aa6a2671b8c15-3187010530"
 
-# --- Configuração do Resend (ENVIO PROFISSIONAL) ---
+# --- Configuração do Resend (ENVIO PROFISSIONAL COM DOMÍNIO VERIFICADO) ---
 RESEND_API_KEY = "re_YcNaqCdZ_JEcKbM9gJx7fa9uoHqPbsKq4"
-# Nota: O Resend exige que o remetente seja verificado. 
-# Por padrão, usaremos o domínio do Resend para garantir o envio imediato.
-EMAIL_FROM = "Alva Educação <onboarding@resend.dev>" 
+# Agora usamos o domínio verificado para o envio
+EMAIL_FROM = "Alva Educação <entrega@alvaeducacao.com.br>" 
+# Respostas dos clientes vão para o seu Gmail
 EMAIL_TO_REPLY = "alvaeducacao@gmail.com"
 
 # --- Mapeamento de Arquivos PDF ---
@@ -49,8 +50,16 @@ def normalize_text(text):
     text = text.encode('ascii', 'ignore').decode("utf-8")
     return text.lower()
 
+def is_valid_email(email):
+    if not email: return False
+    return re.match(r"[^@]+@[^@]+\.[^@]+", email) is not None
+
 def send_email_resend(customer_email, product_name, pdf_paths):
     try:
+        if not is_valid_email(customer_email):
+            logger.error(f"E-mail inválido ou ausente: {customer_email}. Abortando envio.")
+            return False
+
         logger.info(f"Iniciando envio via Resend para {customer_email} - Produto: {product_name}")
         
         attachments = []
@@ -76,13 +85,16 @@ def send_email_resend(customer_email, product_name, pdf_paths):
 
         email_body = f"""
         <html>
-        <body>
-            <p>Olá,</p>
-            <p>Muito obrigado pela sua compra na <strong>Alva Educação</strong>! Estamos muito felizes em ter você conosco.</p>
-            <p>Seu acesso ao curso <strong>{product_name}</strong> está disponível. Anexado a este e-mail, você encontrará o material completo em formato PDF.</p>
-            <p>Esperamos que este conteúdo seja um diferencial em sua jornada e traga resultados incríveis para você.</p>
-            <p>Se tiver qualquer dúvida ou precisar de suporte, não hesite em nos contatar em {EMAIL_TO_REPLY}. Estamos à disposição para ajudar!</p>
-            <p>Atenciosamente,<br>Equipe Alva Educação<br><a href="https://www.alvaeducacao.com.br">www.alvaeducacao.com.br</a></p>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+            <div style="max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+                <h2 style="color: #2c3e50;">Olá!</h2>
+                <p>Muito obrigado pela sua compra na <strong>Alva Educação</strong>! Estamos muito felizes em ter você conosco.</p>
+                <p>Seu acesso ao curso <strong>{product_name}</strong> está disponível. Anexado a este e-mail, você encontrará o material completo em formato PDF.</p>
+                <p>Esperamos que este conteúdo seja um diferencial em sua jornada e traga resultados incríveis para você.</p>
+                <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+                <p style="font-size: 0.9em;">Se tiver qualquer dúvida ou precisar de suporte, basta responder a este e-mail ou nos contatar em <strong>{EMAIL_TO_REPLY}</strong>.</p>
+                <p>Atenciosamente,<br><strong>Equipe Alva Educação</strong><br><a href="https://www.alvaeducacao.com.br" style="color: #3498db; text-decoration: none;">www.alvaeducacao.com.br</a></p>
+            </div>
         </body>
         </html>
         """
