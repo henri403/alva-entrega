@@ -2,7 +2,6 @@ import os
 import smtplib
 import requests
 import logging
-import re
 import unicodedata
 from flask import Flask, request, jsonify, send_from_directory
 from email.mime.multipart import MIMEMultipart
@@ -18,9 +17,9 @@ app = Flask(__name__, static_folder='.')
 # --- Configurações do Mercado Pago ---
 MP_ACCESS_TOKEN = "APP_USR-1698378827686338-020918-3eb43b92c8f40920f12aa6a2671b8c15-3187010530"
 
-# --- Configuração de E-mail ---
+# --- Configuração de E-mail (USANDO SSL PORTA 465) ---
 SMTP_SERVER = "smtp.gmail.com"
-SMTP_PORT = 587
+SMTP_PORT = 465
 SMTP_USER = "alvaeducacao@gmail.com"
 SMTP_PASSWORD = "mwed wyhf xqbo dlyy"
 
@@ -47,7 +46,6 @@ PRODUCT_FILES = {
 }
 
 def normalize_text(text):
-    """Remove acentos e converte para minúsculas."""
     if not text: return ""
     text = unicodedata.normalize('NFD', text)
     text = text.encode('ascii', 'ignore').decode("utf-8")
@@ -86,8 +84,9 @@ def send_email(customer_email, product_name, pdf_paths):
             logger.error("Nenhum arquivo foi anexado. O e-mail não será enviado.")
             return False
 
-        server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
-        server.starttls()
+        # USANDO SMTP_SSL PARA PORTA 465
+        logger.info("Conectando ao servidor SMTP via SSL...")
+        server = smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT, timeout=30)
         server.login(SMTP_USER, SMTP_PASSWORD)
         server.send_message(msg)
         server.quit()
@@ -148,13 +147,10 @@ def webhook():
     if not data:
         return jsonify({"status": "error"}), 400
 
-    # Caso 1: Notificação direta de pagamento
     if data.get("type") == "payment":
         payment_id = data.get("data", {}).get("id")
         if payment_id:
             process_payment(payment_id)
-
-    # Caso 2: Notificação de Merchant Order (Ordem de Mercante)
     elif data.get("type") in ["merchant_order", "topic_merchant_order_wh"]:
         order_id = data.get("data", {}).get("id") or data.get("id")
         if order_id:
