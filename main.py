@@ -21,7 +21,7 @@ MP_ACCESS_TOKEN = "APP_USR-1698378827686338-020918-3eb43b92c8f40920f12aa6a2671b8
 SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 465
 SMTP_USER = "alvaeducacao@gmail.com"
-SMTP_PASSWORD = "pdgq tean mhrk dtjw"
+SMTP_PASSWORD = "iavg dzke sxpi ufcu"
 
 # --- Mapeamento de Arquivos PDF ---
 PRODUCT_FILES = {
