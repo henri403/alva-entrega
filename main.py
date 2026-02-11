@@ -21,7 +21,7 @@ MP_ACCESS_TOKEN = "APP_USR-1698378827686338-020918-3eb43b92c8f40920f12aa6a2671b8
 SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 465
 SMTP_USER = "alvaeducacao@gmail.com"
-SMTP_PASSWORD = "mwed wyhf xqbo dlyy"
+SMTP_PASSWORD = "kdvm hbov qhzg bgtt"
 
 # --- Mapeamento de Arquivos PDF ---
 PRODUCT_FILES = {
@@ -84,7 +84,6 @@ def send_email(customer_email, product_name, pdf_paths):
             logger.error("Nenhum arquivo foi anexado. O e-mail não será enviado.")
             return False
 
-        # USANDO SMTP_SSL PARA PORTA 465
         logger.info("Conectando ao servidor SMTP via SSL...")
         server = smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT, timeout=30)
         server.login(SMTP_USER, SMTP_PASSWORD)
