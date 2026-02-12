@@ -3,9 +3,9 @@ import requests
 import json
 import threading
 import time
-from flask import Flask, request, jsonify, make_response
+from flask import Flask, request, jsonify, make_response, send_from_directory
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='.')
 
 # Configurações
 MERCADO_PAGO_TOKEN = os.getenv('MERCADO_PAGO_TOKEN')
@@ -46,9 +46,15 @@ def handle_options():
         response = make_response()
         return add_cors_headers(response)
 
-@app.route('/', methods=['GET'])
-def home():
-    return "Servidor Alva Educação ativo! ✅"
+@app.route('/')
+def serve_index():
+    """Serve o arquivo index.html na raiz do domínio"""
+    return send_from_directory('.', 'index.html')
+
+@app.route('/<path:path>')
+def serve_static(path):
+    """Serve outros arquivos estáticos (CSS, JS, Imagens)"""
+    return send_from_directory('.', path)
 
 @app.route('/create_preference', methods=['POST'])
 def create_preference():
@@ -61,14 +67,12 @@ def create_preference():
         if not email or not product_id:
             return add_cors_headers(jsonify({'error': 'E-mail e produto são obrigatórios'})), 400
 
-        # Validar produto
         if product_id not in PRODUCTS:
             return add_cors_headers(jsonify({'error': 'Produto não encontrado'})), 400
 
         product = PRODUCTS[product_id]
         price = float(product['price'])
 
-        # Criar preferência
         preference_data = {
             'items': [{
                 'title': product['name'],
@@ -102,25 +106,18 @@ def create_preference():
         )
 
         if response.status_code not in [200, 201]:
-            print(f"[ERROR] Mercado Pago {response.status_code}: {response.text}")
             return add_cors_headers(jsonify({'error': 'Falha ao gerar link de pagamento'})), 500
 
         preference = response.json()
         init_point = preference.get('init_point')
 
-        if not init_point:
-            print(f"[ERROR] Sem init_point: {preference}")
-            return add_cors_headers(jsonify({'error': 'Link não gerado'})), 500
-
-        print(f"[INFO] Preferência criada: {email} - {product['name']} - R$ {price}")
         return add_cors_headers(jsonify({'init_point': init_point})), 200
 
     except Exception as e:
-        print(f"[ERROR] Erro ao criar preferência: {str(e)}")
         return add_cors_headers(jsonify({'error': str(e)})), 500
 
 def send_pdf_email(customer_email, product_name):
-    """Envia o PDF do produto para o cliente"""
+    """Envia o PDF do produto para o cliente via Resend"""
     try:
         headers = {
             'Authorization': f'Bearer {RESEND_API_KEY}',
@@ -142,97 +139,44 @@ def send_pdf_email(customer_email, product_name):
             'html': email_body,
         }
         
-        response = requests.post(
-            'https://api.resend.com/emails',
-            json=payload,
-            headers=headers,
-            timeout=10
-        )
-        
-        if response.status_code == 200:
-            print(f"[INFO] E-mail enviado para {customer_email}")
-            return True
-        else:
-            print(f"[ERROR] Resend retornou {response.status_code}: {response.text}")
-            return False
-    except Exception as e:
-        print(f"[ERROR] Falha ao enviar e-mail: {str(e)}")
+        requests.post('https://api.resend.com/emails', json=payload, headers=headers, timeout=10)
+        return True
+    except:
         return False
 
-def get_payment_with_retry(payment_id, max_attempts=20):
-    """Busca dados do pagamento com retry"""
+def process_payment_background(payment_id):
+    """Busca dados do pagamento e envia e-mail"""
     headers = {'Authorization': f'Bearer {MERCADO_PAGO_TOKEN}'}
     
-    for attempt in range(max_attempts):
+    for _ in range(20): # Tenta por 10 minutos
         try:
-            response = requests.get(
-                f'https://api.mercadopago.com/v1/payments/{payment_id}',
-                headers=headers,
-                timeout=10
-            )
-            
+            response = requests.get(f'https://api.mercadopago.com/v1/payments/{payment_id}', headers=headers, timeout=10)
             if response.status_code == 200:
                 data = response.json()
                 email = data.get('payer', {}).get('email')
                 status = data.get('status')
                 
                 if email and email != 'None' and status == 'approved':
-                    return data
-                
-                print(f"[INFO] Tentativa {attempt + 1}: Aguardando dados...")
-                time.sleep(30)
-            else:
-                time.sleep(30)
-        except Exception as e:
-            print(f"[ERROR] Erro na tentativa {attempt + 1}: {str(e)}")
+                    items = data.get('additional_info', {}).get('items', [])
+                    product_name = items[0].get('title', 'Produto') if items else data.get('description', 'Produto')
+                    send_pdf_email(email, product_name)
+                    break
             time.sleep(30)
-    
-    return None
-
-def process_payment_background(payment_id):
-    """Processa o pagamento em segundo plano"""
-    print(f"[INFO] Iniciando busca para Payment: {payment_id}")
-    
-    payment_data = get_payment_with_retry(payment_id)
-    
-    if not payment_data:
-        print(f"[ERROR] Não foi possível obter dados após 10 minutos")
-        return
-    
-    email = payment_data.get('payer', {}).get('email')
-    items = payment_data.get('additional_info', {}).get('items', [])
-    
-    if not items:
-        # Fallback para buscar o nome do produto se items estiver vazio
-        items = payment_data.get('description', 'Produto')
-        product_name = items if isinstance(items, str) else "Produto"
-    else:
-        product_name = items[0].get('title', 'Produto')
-        
-    if email:
-        print(f"[INFO] Enviando PDF para {email}: {product_name}")
-        send_pdf_email(email, product_name)
+        except:
+            time.sleep(30)
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
     """Recebe notificações do Mercado Pago"""
     try:
         data = request.get_json()
-        action = data.get('action')
-        
-        if action in ['payment.created', 'payment.updated']:
+        if data.get('action') in ['payment.created', 'payment.updated']:
             payment_id = data.get('data', {}).get('id')
-            print(f"[INFO] Webhook: {action} - Payment ID: {payment_id}")
-            
-            # Processar em segundo plano
             threading.Thread(target=process_payment_background, args=(payment_id,)).start()
-            return add_cors_headers(jsonify({'status': 'received'})), 200
-        
         return add_cors_headers(jsonify({'status': 'received'})), 200
-    
-    except Exception as e:
-        print(f"[ERROR] Erro no webhook: {str(e)}")
-        return add_cors_headers(jsonify({'error': str(e)})), 500
+    except:
+        return add_cors_headers(jsonify({'status': 'received'})), 200
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=False)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
