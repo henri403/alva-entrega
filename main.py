@@ -5,7 +5,6 @@ import threading
 import time
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from resend import Resend
 
 app = Flask(__name__)
 CORS(app)
@@ -113,7 +112,11 @@ def create_preference():
 def send_pdf_email(customer_email, product_name):
     """Envia o PDF do produto para o cliente"""
     try:
-        client = Resend(api_key=RESEND_API_KEY)
+        # Usando requests para chamar a API do Resend
+        headers = {
+            'Authorization': f'Bearer {RESEND_API_KEY}',
+            'Content-Type': 'application/json',
+        }
         
         email_body = f"""
         <h2>Parabéns pela sua compra! 🎉</h2>
@@ -123,16 +126,26 @@ def send_pdf_email(customer_email, product_name):
         <p>Abraços,<br>Alva Educação</p>
         """
         
-        response = client.emails.send({
+        payload = {
             'from': 'contato@alvaeducacao.com.br',
             'to': customer_email,
-            'reply_to': ADMIN_EMAIL,
             'subject': f'Seu Material - {product_name}',
             'html': email_body,
-        })
+        }
         
-        print(f"[INFO] E-mail enviado para {customer_email}")
-        return True
+        response = requests.post(
+            'https://api.resend.com/emails',
+            json=payload,
+            headers=headers,
+            timeout=10
+        )
+        
+        if response.status_code == 200:
+            print(f"[INFO] E-mail enviado para {customer_email}")
+            return True
+        else:
+            print(f"[ERROR] Resend retornou {response.status_code}: {response.text}")
+            return False
     except Exception as e:
         print(f"[ERROR] Falha ao enviar e-mail: {str(e)}")
         return False
