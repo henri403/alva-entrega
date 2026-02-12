@@ -106,63 +106,72 @@ def send_email_resend(customer_email, product_name, pdf_paths):
         logger.error(f"Erro envio: {e}")
         return False
 
-def get_email_from_merchant_order(order_id):
-    """Tenta buscar o e-mail do cliente na Ordem de Venda (Merchant Order)"""
-    url = f"https://api.mercadopago.com/merchant_orders/{order_id}"
-    headers = {"Authorization": f"Bearer {MP_ACCESS_TOKEN}"}
-    try:
-        response = requests.get(url, headers=headers)
-        if response.status_code == 200:
-            order_data = response.json()
-            # Tenta pegar o e-mail do comprador na ordem
-            email = order_data.get("payer", {}).get("email")
-            if is_valid_email(email):
-                return email
-            # Se não tiver, tenta ver se tem algum e-mail nos pagamentos vinculados
-            for payment in order_data.get("payments", []):
-                p_email = payment.get("payer", {}).get("email")
-                if is_valid_email(p_email):
-                    return p_email
-    except Exception as e:
-        logger.error(f"Erro ao buscar Merchant Order {order_id}: {e}")
-    return None
+def get_data_with_retry(payment_id, order_id=None):
+    """Tenta buscar os dados do cliente repetidamente por até 5 minutos"""
+    max_attempts = 10
+    wait_seconds = 30
+    
+    for attempt in range(1, max_attempts + 1):
+        logger.info(f"Tentativa {attempt}/{max_attempts} de buscar dados para Pagamento {payment_id}...")
+        
+        # 1. Tenta buscar no Pagamento
+        url_p = f"https://api.mercadopago.com/v1/payments/{payment_id}"
+        headers = {"Authorization": f"Bearer {MP_ACCESS_TOKEN}"}
+        try:
+            resp_p = requests.get(url_p, headers=headers)
+            if resp_p.status_code == 200:
+                p_data = resp_p.json()
+                email = p_data.get("payer", {}).get("email")
+                
+                # Se não achou no payer, tenta no additional_info
+                if not is_valid_email(email):
+                    email = p_data.get("additional_info", {}).get("payer", {}).get("email")
+                
+                desc = p_data.get("description", "")
+                if not desc and p_data.get("additional_info", {}).get("items"):
+                    desc = p_data["additional_info"]["items"][0].get("title", "")
+                
+                if is_valid_email(email) and desc:
+                    return email, desc
+        except Exception as e:
+            logger.error(f"Erro na tentativa {attempt} (Pagamento): {e}")
 
-def process_payment(payment_id, order_id=None):
-    url = f"https://api.mercadopago.com/v1/payments/{payment_id}"
-    headers = {"Authorization": f"Bearer {MP_ACCESS_TOKEN}"}
-    try:
-        response = requests.get(url, headers=headers)
-        if response.status_code == 200:
-            payment_info = response.json()
-            if payment_info.get("status") == "approved":
-                # 1. Tenta pegar e-mail do pagamento
-                customer_email = payment_info.get("payer", {}).get("email")
-                
-                # 2. Se falhar e tivermos o order_id, tenta na Merchant Order
-                if not is_valid_email(customer_email) and order_id:
-                    logger.info(f"E-mail não encontrado no pagamento {payment_id}. Buscando na Ordem {order_id}...")
-                    customer_email = get_email_from_merchant_order(order_id)
-                
-                # 3. Tenta pegar a descrição
-                description = payment_info.get("description", "")
-                if not description and payment_info.get("additional_info", {}).get("items"):
-                    description = payment_info["additional_info"]["items"][0].get("title", "")
-                
-                logger.info(f"Processando: ID={payment_id}, E-mail={customer_email}, Produto={description}")
-                
-                norm_desc = normalize_text(description)
-                found_product = None
-                for key in PRODUCT_FILES:
-                    if key in norm_desc:
-                        found_product = key
-                        break
-                
-                if is_valid_email(customer_email) and found_product:
-                    send_email_resend(customer_email, description, PRODUCT_FILES[found_product])
-                else:
-                    logger.warning(f"DADOS INCOMPLETOS: E-mail={customer_email}, Produto={found_product}")
-    except Exception as e:
-        logger.error(f"Erro process_payment: {e}")
+        # 2. Tenta buscar na Merchant Order se tiver o ID
+        if order_id:
+            url_o = f"https://api.mercadopago.com/merchant_orders/{order_id}"
+            try:
+                resp_o = requests.get(url_o, headers=headers)
+                if resp_o.status_code == 200:
+                    o_data = resp_o.json()
+                    email_o = o_data.get("payer", {}).get("email")
+                    if is_valid_email(email_o):
+                        # Se achou o e-mail, tenta pegar a descrição do pagamento de novo
+                        return email_o, desc if 'desc' in locals() and desc else "Produto Alva Educação"
+            except Exception as e:
+                logger.error(f"Erro na tentativa {attempt} (Ordem): {e}")
+
+        logger.warning(f"Dados ainda não disponíveis na tentativa {attempt}. Aguardando {wait_seconds}s...")
+        time.sleep(wait_seconds)
+    
+    return None, None
+
+def process_webhook_logic(payment_id, order_id=None):
+    email, description = get_data_with_retry(payment_id, order_id)
+    
+    if email and description:
+        norm_desc = normalize_text(description)
+        found_product = None
+        for key in PRODUCT_FILES:
+            if key in norm_desc:
+                found_product = key
+                break
+        
+        if found_product:
+            send_email_resend(email, description, PRODUCT_FILES[found_product])
+        else:
+            logger.error(f"Produto não mapeado: {description}")
+    else:
+        logger.error(f"Desistindo após várias tentativas. E-mail ou Produto não encontrados para ID {payment_id}")
 
 @app.route('/')
 def index():
@@ -175,29 +184,29 @@ def webhook():
     
     if not data: return jsonify({"status": "ok"}), 200
 
-    # Se for notificação de pagamento
+    payment_id = None
+    order_id = None
+
     if data.get("type") == "payment":
         payment_id = data.get("data", {}).get("id")
-        if payment_id:
-            process_payment(payment_id)
-            
-    # Se for notificação de ordem (Merchant Order)
     elif data.get("type") in ["merchant_order", "topic_merchant_order_wh"]:
         order_id = data.get("data", {}).get("id") or data.get("id")
-        if order_id:
-            # Pequena espera para o MP processar tudo
-            time.sleep(2)
-            url = f"https://api.mercadopago.com/merchant_orders/{order_id}"
-            headers = {"Authorization": f"Bearer {MP_ACCESS_TOKEN}"}
-            try:
-                response = requests.get(url, headers=headers)
-                if response.status_code == 200:
-                    order_info = response.json()
-                    for payment in order_info.get("payments", []):
-                        if payment.get("status") == "approved":
-                            process_payment(payment.get("id"), order_id)
-            except Exception as e:
-                logger.error(f"Erro webhook merchant_order: {e}")
+        # Se for ordem, precisamos achar o ID do pagamento aprovado nela
+        url = f"https://api.mercadopago.com/merchant_orders/{order_id}"
+        headers = {"Authorization": f"Bearer {MP_ACCESS_TOKEN}"}
+        try:
+            resp = requests.get(url, headers=headers)
+            if resp.status_code == 200:
+                o_info = resp.json()
+                for p in o_info.get("payments", []):
+                    if p.get("status") == "approved":
+                        payment_id = p.get("id")
+                        break
+        except: pass
+
+    if payment_id:
+        # Executa a lógica de retry sem travar o webhook (opcional: usar thread se o Render reclamar de timeout)
+        process_webhook_logic(payment_id, order_id)
 
     return jsonify({"status": "ok"}), 200
 
