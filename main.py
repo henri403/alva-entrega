@@ -3,11 +3,9 @@ import requests
 import json
 import threading
 import time
-from flask import Flask, request, jsonify
-from flask_cors import CORS
+from flask import Flask, request, jsonify, make_response
 
 app = Flask(__name__)
-CORS(app)
 
 # Configurações
 MERCADO_PAGO_TOKEN = os.getenv('MERCADO_PAGO_TOKEN')
@@ -36,6 +34,18 @@ PRODUCTS = {
     'guia_ia': {'name': 'Guia de IA para Negócios', 'price': 34.90},
 }
 
+def add_cors_headers(response):
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Methods'] = 'POST, GET, OPTIONS'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+    return response
+
+@app.before_request
+def handle_options():
+    if request.method == 'OPTIONS':
+        response = make_response()
+        return add_cors_headers(response)
+
 @app.route('/', methods=['GET'])
 def home():
     return "Servidor Alva Educação ativo! ✅"
@@ -49,11 +59,11 @@ def create_preference():
         product_id = data.get('product_id')
 
         if not email or not product_id:
-            return jsonify({'error': 'E-mail e produto são obrigatórios'}), 400
+            return add_cors_headers(jsonify({'error': 'E-mail e produto são obrigatórios'})), 400
 
         # Validar produto
         if product_id not in PRODUCTS:
-            return jsonify({'error': 'Produto não encontrado'}), 400
+            return add_cors_headers(jsonify({'error': 'Produto não encontrado'})), 400
 
         product = PRODUCTS[product_id]
         price = float(product['price'])
@@ -93,26 +103,25 @@ def create_preference():
 
         if response.status_code not in [200, 201]:
             print(f"[ERROR] Mercado Pago {response.status_code}: {response.text}")
-            return jsonify({'error': 'Falha ao gerar link de pagamento'}), 500
+            return add_cors_headers(jsonify({'error': 'Falha ao gerar link de pagamento'})), 500
 
         preference = response.json()
         init_point = preference.get('init_point')
 
         if not init_point:
             print(f"[ERROR] Sem init_point: {preference}")
-            return jsonify({'error': 'Link não gerado'}), 500
+            return add_cors_headers(jsonify({'error': 'Link não gerado'})), 500
 
         print(f"[INFO] Preferência criada: {email} - {product['name']} - R$ {price}")
-        return jsonify({'init_point': init_point}), 200
+        return add_cors_headers(jsonify({'init_point': init_point})), 200
 
     except Exception as e:
         print(f"[ERROR] Erro ao criar preferência: {str(e)}")
-        return jsonify({'error': str(e)}), 500
+        return add_cors_headers(jsonify({'error': str(e)})), 500
 
 def send_pdf_email(customer_email, product_name):
     """Envia o PDF do produto para o cliente"""
     try:
-        # Usando requests para chamar a API do Resend
         headers = {
             'Authorization': f'Bearer {RESEND_API_KEY}',
             'Content-Type': 'application/json',
@@ -191,10 +200,16 @@ def process_payment_background(payment_id):
         return
     
     email = payment_data.get('payer', {}).get('email')
-    items = payment_data.get('items', [])
+    items = payment_data.get('additional_info', {}).get('items', [])
     
-    if email and items:
+    if not items:
+        # Fallback para buscar o nome do produto se items estiver vazio
+        items = payment_data.get('description', 'Produto')
+        product_name = items if isinstance(items, str) else "Produto"
+    else:
         product_name = items[0].get('title', 'Produto')
+        
+    if email:
         print(f"[INFO] Enviando PDF para {email}: {product_name}")
         send_pdf_email(email, product_name)
 
@@ -211,13 +226,13 @@ def webhook():
             
             # Processar em segundo plano
             threading.Thread(target=process_payment_background, args=(payment_id,)).start()
-            return jsonify({'status': 'received'}), 200
+            return add_cors_headers(jsonify({'status': 'received'})), 200
         
-        return jsonify({'status': 'received'}), 200
+        return add_cors_headers(jsonify({'status': 'received'})), 200
     
     except Exception as e:
         print(f"[ERROR] Erro no webhook: {str(e)}")
-        return jsonify({'error': str(e)}), 500
+        return add_cors_headers(jsonify({'error': str(e)})), 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=False)
