@@ -498,7 +498,6 @@
             color: #1e1b4b;
             padding: 4px 12px;
             border-radius: 4px;
-            font-weight: 800;
             font-size: 14px;
             margin-bottom: 20px;
         }
@@ -715,6 +714,46 @@
             box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
         }
 
+        /* NOVO: Estilo para o Order Bump */
+        .order-bump {
+            margin-top: 15px;
+            padding: 15px;
+            background: #fffbeb;
+            border: 2px dashed #fbbf24;
+            border-radius: 10px;
+            display: none;
+        }
+        .order-bump-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        .order-bump-title {
+            font-size: 13px;
+            font-weight: 800;
+            color: #92400e;
+        }
+        .order-bump-desc {
+            font-size: 12px;
+            color: #b45309;
+            margin-bottom: 10px;
+        }
+        .order-bump-action {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            font-weight: bold;
+            color: #1a1a1a;
+            cursor: pointer;
+        }
+        .order-bump-action input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
         .cart-total {
             margin-top: 20px;
             padding-top: 15px;
@@ -779,7 +818,6 @@
         }
 
         footer p {
-            font-size: 14px;
             opacity: 0.8;
         }
 
@@ -891,7 +929,7 @@
         <section class="testimonials-section">
             <h2 class="section-title">O que é a Alva Educação?</h2>
             <p class="section-subtitle" style="max-width: 800px; margin: 0 auto 40px auto; line-height: 1.8;">
-                Na Alva Educação, acreditamos que o sucesso em vendas e marketing não deve ser um mistério. Nosso propósito é trazer luz às estratégias que realmente funcionam, eliminando o excesso de informação e entregando o que há de mais límpido e prático no mercado. Aqui, o seu aprendizado é o despertar para uma nova performance: cursos estruturados para quem busca clareza técnica e honestidade nos métodos.
+                Na Alva Educação, acreditamos que o success em vendas e marketing não deve ser um mistério. Nosso propósito é trazer luz às estratégias que realmente funcionam, eliminando o excesso de informação e entregando o que há de mais límpido e prático no mercado. Aqui, o seu aprendizado é o despertar para uma nova performance: cursos estruturados para quem busca clareza técnica e honestidade nos métodos.
             </p>
         </section>
 
@@ -1247,7 +1285,7 @@
                         <span class="old-price">R$ 318,40</span>
                         <div class="new-price">R$ 46,40</div>
                     </div>
-                    <button class="btn-buy" onclick="addToCart('pacote_completo', 46.40, 'Pacote Completo (16 Módulos)')">🛒 COMPRAR PACOTE COMPLETO</button>
+                    <button class="btn-buy" onclick="addToCart('pacote_completo', 46.40, 'Pacote Completo (16 Módulos)')">🛒 ADICIONAR AO CARRINHO</button>
                 </div>
 
                 <!-- Guia de IA -->
@@ -1271,7 +1309,7 @@
                         <span class="old-price">R$ 46,50</span>
                         <div class="new-price">R$ 34,90</div>
                     </div>
-                    <button class="btn-buy" onclick="addToCart('guia_ia', 34.90, 'Guia de IA para Negócios')">🛒 COMPRAR GUIA DE IA</button>
+                    <button class="btn-buy" onclick="addToCart('guia_ia', 34.90, 'Guia de IA para Negócios')">🛒 ADICIONAR AO CARRINHO</button>
                 </div>
             </div>
         </section>
@@ -1286,6 +1324,19 @@
             </div>
             <div id="cart-items-list" class="cart-items">
                 <!-- Itens do carrinho aqui -->
+            </div>
+
+            <!-- NOVO: Order Bump -->
+            <div id="order-bump" class="order-bump">
+                <div class="order-bump-header">
+                    <span style="font-size: 20px;">🎁</span>
+                    <span class="order-bump-title">OFERTA EXCLUSIVA!</span>
+                </div>
+                <p class="order-bump-desc">Adicione o <strong>Guia de IA para Negócios</strong> por apenas <strong>R$ 34,90</strong> e acelere seus resultados!</p>
+                <label class="order-bump-action">
+                    <input type="checkbox" id="bump-checkbox" onchange="handleBumpChange()">
+                    Sim, eu quero o Guia de IA!
+                </label>
             </div>
 
             <!-- NOVO: Campo de E-mail dentro do Carrinho -->
@@ -1329,6 +1380,12 @@
         }
 
         function addToCart(id, price, name) {
+            // Evitar duplicados no carrinho para pacotes
+            if (cart.some(item => item.productId === id)) {
+                toggleCart();
+                return;
+            }
+            
             cart.push({ id: Date.now(), productId: id, name, price });
             localStorage.setItem('alva_cart', JSON.stringify(cart));
             updateCartUI();
@@ -1339,7 +1396,24 @@
         }
 
         function removeFromCart(id) {
+            const itemToRemove = cart.find(item => item.id === id);
+            if (itemToRemove && itemToRemove.productId === 'guia_ia') {
+                document.getElementById('bump-checkbox').checked = false;
+            }
             cart = cart.filter(item => item.id !== id);
+            localStorage.setItem('alva_cart', JSON.stringify(cart));
+            updateCartUI();
+        }
+
+        function handleBumpChange() {
+            const checkbox = document.getElementById('bump-checkbox');
+            if (checkbox.checked) {
+                if (!cart.some(item => item.productId === 'guia_ia')) {
+                    cart.push({ id: Date.now(), productId: 'guia_ia', name: 'Guia de IA para Negócios', price: 34.90 });
+                }
+            } else {
+                cart = cart.filter(item => item.productId !== 'guia_ia');
+            }
             localStorage.setItem('alva_cart', JSON.stringify(cart));
             updateCartUI();
         }
@@ -1348,9 +1422,21 @@
             const badge = document.getElementById('cart-badge');
             const list = document.getElementById('cart-items-list');
             const totalSpan = document.getElementById('cart-total-value');
+            const bumpSection = document.getElementById('order-bump');
             
             badge.textContent = cart.length;
             badge.style.display = cart.length > 0 ? 'block' : 'none';
+            
+            // Lógica do Order Bump: Mostrar se tiver Pacote Completo e NÃO tiver Guia de IA
+            const hasPackage = cart.some(item => item.productId === 'pacote_completo');
+            const hasIA = cart.some(item => item.productId === 'guia_ia');
+            
+            if (hasPackage && !hasIA) {
+                bumpSection.style.display = 'block';
+            } else {
+                bumpSection.style.display = 'none';
+                if (hasIA) document.getElementById('bump-checkbox').checked = true;
+            }
             
             if (cart.length === 0) {
                 list.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">Seu carrinho está vazio.</p>';
@@ -1391,17 +1477,18 @@
                 return;
             }
 
+            // Prioridade de pagamento: Pacote Completo > Guia IA > Primeiro item
             let productId = cart[0].productId;
-            if (cart.length > 1) {
-                if (confirm("Para múltiplos itens, recomendamos o Pacote Completo com desconto. Deseja ir para o Pacote Completo?")) {
-                    productId = 'pacote_completo';
-                }
+            if (cart.some(item => item.productId === 'pacote_completo')) {
+                productId = 'pacote_completo';
+            } else if (cart.some(item => item.productId === 'guia_ia')) {
+                productId = 'guia_ia';
             }
 
             document.getElementById('loading-overlay').style.display = 'flex';
 
             try {
-                const response = await fetch('/create_preference', {
+                const response = await fetch('https://alva-entrega.onrender.com/create_preference', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email: email, product_id: productId })
