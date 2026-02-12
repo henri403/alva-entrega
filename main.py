@@ -4,6 +4,7 @@ import logging
 import unicodedata
 import base64
 import re
+import time
 from flask import Flask, request, jsonify, send_from_directory
 
 # Configuração de Logs
@@ -49,49 +50,40 @@ def normalize_text(text):
     return text.lower()
 
 def is_valid_email(email):
-    if not email: return False
-    # Filtra e-mails de teste ou mascarados
-    if "XXXXXXXXXXX" in email or "test_user" in email:
+    if not email or not isinstance(email, str): return False
+    if "XXXXXXXXXXX" in email or "test_user" in email or "@testuser.com" in email:
         return False
     return re.match(r"[^@]+@[^@]+\.[^@]+", email) is not None
 
 def send_email_resend(customer_email, product_name, pdf_paths):
     try:
         if not is_valid_email(customer_email):
-            logger.error(f"E-mail inválido ou ausente: {customer_email}. Abortando envio.")
+            logger.error(f"E-mail inválido: {customer_email}. Abortando.")
             return False
 
-        logger.info(f"Iniciando envio via Resend para {customer_email} - Produto: {product_name}")
+        logger.info(f"Enviando via Resend para {customer_email} - Produto: {product_name}")
         
         attachments = []
         for path in pdf_paths:
-            actual_path = path
-            if not os.path.exists(actual_path):
-                actual_path = os.path.join("modules", path)
-            
+            actual_path = path if os.path.exists(path) else os.path.join("modules", path)
             if os.path.exists(actual_path):
                 with open(actual_path, "rb") as f:
                     content = base64.b64encode(f.read()).decode()
-                    attachments.append({
-                        "content": content,
-                        "filename": os.path.basename(actual_path)
-                    })
+                    attachments.append({"content": content, "filename": os.path.basename(actual_path)})
             else:
-                logger.error(f"Arquivo NÃO encontrado: {actual_path}")
+                logger.error(f"Arquivo não encontrado: {actual_path}")
 
-        if not attachments:
-            logger.error("Nenhum arquivo encontrado para anexar.")
-            return False
+        if not attachments: return False
 
         email_body = f"""
         <html>
         <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
             <div style="max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
                 <h2 style="color: #2c3e50;">Olá!</h2>
-                <p>Muito obrigado pela sua compra na <strong>Alva Educação</strong>!</p>
-                <p>Seu acesso ao curso <strong>{product_name}</strong> está disponível. Anexado a este e-mail, você encontrará o material completo em formato PDF.</p>
+                <p>Obrigado pela sua compra na <strong>Alva Educação</strong>!</p>
+                <p>Seu material <strong>{product_name}</strong> está em anexo.</p>
                 <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
-                <p style="font-size: 0.9em;">Se tiver qualquer dúvida, responda a este e-mail ou nos contate em <strong>{EMAIL_TO_REPLY}</strong>.</p>
+                <p style="font-size: 0.9em;">Dúvidas? Responda a este e-mail ou escreva para <strong>{EMAIL_TO_REPLY}</strong>.</p>
                 <p>Atenciosamente,<br><strong>Equipe Alva Educação</strong></p>
             </div>
         </body>
@@ -109,18 +101,33 @@ def send_email_resend(customer_email, product_name, pdf_paths):
 
         headers = {"Authorization": f"Bearer {RESEND_API_KEY}", "Content-Type": "application/json"}
         response = requests.post("https://api.resend.com/emails", json=payload, headers=headers)
-        
-        if response.status_code in [200, 201]:
-            logger.info(f"E-mail enviado com sucesso para {customer_email}")
-            return True
-        else:
-            logger.error(f"Erro Resend: {response.status_code} - {response.text}")
-            return False
+        return response.status_code in [200, 201]
     except Exception as e:
-        logger.error(f"Erro send_email_resend: {e}")
+        logger.error(f"Erro envio: {e}")
         return False
 
-def process_payment(payment_id):
+def get_email_from_merchant_order(order_id):
+    """Tenta buscar o e-mail do cliente na Ordem de Venda (Merchant Order)"""
+    url = f"https://api.mercadopago.com/merchant_orders/{order_id}"
+    headers = {"Authorization": f"Bearer {MP_ACCESS_TOKEN}"}
+    try:
+        response = requests.get(url, headers=headers)
+        if response.status_code == 200:
+            order_data = response.json()
+            # Tenta pegar o e-mail do comprador na ordem
+            email = order_data.get("payer", {}).get("email")
+            if is_valid_email(email):
+                return email
+            # Se não tiver, tenta ver se tem algum e-mail nos pagamentos vinculados
+            for payment in order_data.get("payments", []):
+                p_email = payment.get("payer", {}).get("email")
+                if is_valid_email(p_email):
+                    return p_email
+    except Exception as e:
+        logger.error(f"Erro ao buscar Merchant Order {order_id}: {e}")
+    return None
+
+def process_payment(payment_id, order_id=None):
     url = f"https://api.mercadopago.com/v1/payments/{payment_id}"
     headers = {"Authorization": f"Bearer {MP_ACCESS_TOKEN}"}
     try:
@@ -128,18 +135,20 @@ def process_payment(payment_id):
         if response.status_code == 200:
             payment_info = response.json()
             if payment_info.get("status") == "approved":
-                # Tenta pegar o e-mail de vários lugares possíveis no JSON do MP
+                # 1. Tenta pegar e-mail do pagamento
                 customer_email = payment_info.get("payer", {}).get("email")
                 
-                # Se o e-mail for mascarado ou ausente, tenta buscar no 'additional_info'
-                if not is_valid_email(customer_email):
-                    customer_email = payment_info.get("additional_info", {}).get("payer", {}).get("email")
+                # 2. Se falhar e tivermos o order_id, tenta na Merchant Order
+                if not is_valid_email(customer_email) and order_id:
+                    logger.info(f"E-mail não encontrado no pagamento {payment_id}. Buscando na Ordem {order_id}...")
+                    customer_email = get_email_from_merchant_order(order_id)
                 
+                # 3. Tenta pegar a descrição
                 description = payment_info.get("description", "")
                 if not description and payment_info.get("additional_info", {}).get("items"):
                     description = payment_info["additional_info"]["items"][0].get("title", "")
                 
-                logger.info(f"Pagamento {payment_id} aprovado. E-mail encontrado: {customer_email}")
+                logger.info(f"Processando: ID={payment_id}, E-mail={customer_email}, Produto={description}")
                 
                 norm_desc = normalize_text(description)
                 found_product = None
@@ -151,9 +160,7 @@ def process_payment(payment_id):
                 if is_valid_email(customer_email) and found_product:
                     send_email_resend(customer_email, description, PRODUCT_FILES[found_product])
                 else:
-                    logger.warning(f"Falha ao processar: E-mail={customer_email}, Produto={found_product}")
-        else:
-            logger.error(f"Erro ao buscar pagamento {payment_id}: {response.status_code}")
+                    logger.warning(f"DADOS INCOMPLETOS: E-mail={customer_email}, Produto={found_product}")
     except Exception as e:
         logger.error(f"Erro process_payment: {e}")
 
@@ -166,31 +173,31 @@ def webhook():
     data = request.json
     logger.info(f"Webhook recebido: {data}")
     
-    if not data:
-        return jsonify({"status": "error"}), 400
+    if not data: return jsonify({"status": "ok"}), 200
 
-    # Se for notificação de pagamento direto
+    # Se for notificação de pagamento
     if data.get("type") == "payment":
         payment_id = data.get("data", {}).get("id")
         if payment_id:
             process_payment(payment_id)
             
-    # Se for notificação de ordem (comum no MP)
+    # Se for notificação de ordem (Merchant Order)
     elif data.get("type") in ["merchant_order", "topic_merchant_order_wh"]:
         order_id = data.get("data", {}).get("id") or data.get("id")
         if order_id:
+            # Pequena espera para o MP processar tudo
+            time.sleep(2)
             url = f"https://api.mercadopago.com/merchant_orders/{order_id}"
             headers = {"Authorization": f"Bearer {MP_ACCESS_TOKEN}"}
             try:
                 response = requests.get(url, headers=headers)
                 if response.status_code == 200:
                     order_info = response.json()
-                    # Varre todos os pagamentos da ordem em busca do aprovado
                     for payment in order_info.get("payments", []):
                         if payment.get("status") == "approved":
-                            process_payment(payment.get("id"))
+                            process_payment(payment.get("id"), order_id)
             except Exception as e:
-                logger.error(f"Erro ao buscar ordem {order_id}: {e}")
+                logger.error(f"Erro webhook merchant_order: {e}")
 
     return jsonify({"status": "ok"}), 200
 
