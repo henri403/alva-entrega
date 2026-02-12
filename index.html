@@ -929,7 +929,7 @@
         <section class="testimonials-section">
             <h2 class="section-title">O que é a Alva Educação?</h2>
             <p class="section-subtitle" style="max-width: 800px; margin: 0 auto 40px auto; line-height: 1.8;">
-                Na Alva Educação, acreditamos que o success em vendas e marketing não deve ser um mistério. Nosso propósito é trazer luz às estratégias que realmente funcionam, eliminando o excesso de informação e entregando o que há de mais límpido e prático no mercado. Aqui, o seu aprendizado é o despertar para uma nova performance: cursos estruturados para quem busca clareza técnica e honestidade nos métodos.
+                Na Alva Educação, acreditamos que o sucesso em vendas e marketing não deve ser um mistério. Nosso propósito é trazer luz às estratégias que realmente funcionam, eliminando o excesso de informação e entregando o que há de mais límpido e prático no mercado. Aqui, o seu aprendizado é o despertar para uma nova performance: cursos estruturados para quem busca clareza técnica e honestidade nos métodos.
             </p>
         </section>
 
@@ -1380,12 +1380,10 @@
         }
 
         function addToCart(id, price, name) {
-            // Evitar duplicados no carrinho para pacotes
             if (cart.some(item => item.productId === id)) {
                 toggleCart();
                 return;
             }
-            
             cart.push({ id: Date.now(), productId: id, name, price });
             localStorage.setItem('alva_cart', JSON.stringify(cart));
             updateCartUI();
@@ -1427,7 +1425,6 @@
             badge.textContent = cart.length;
             badge.style.display = cart.length > 0 ? 'block' : 'none';
             
-            // Lógica do Order Bump: Mostrar se tiver Pacote Completo e NÃO tiver Guia de IA
             const hasPackage = cart.some(item => item.productId === 'pacote_completo');
             const hasIA = cart.some(item => item.productId === 'guia_ia');
             
@@ -1435,7 +1432,10 @@
                 bumpSection.style.display = 'block';
             } else {
                 bumpSection.style.display = 'none';
-                if (hasIA) document.getElementById('bump-checkbox').checked = true;
+                if (hasIA) {
+                    const cb = document.getElementById('bump-checkbox');
+                    if (cb) cb.checked = true;
+                }
             }
             
             if (cart.length === 0) {
@@ -1471,38 +1471,23 @@
                 document.getElementById('customer-email').focus();
                 return;
             }
+            if (cart.length === 0) return;
 
-            if (cart.length === 0) {
-                alert("Seu carrinho está vazio!");
-                return;
-            }
-
-            // Prioridade de pagamento: Pacote Completo > Guia IA > Primeiro item
-            let productId = cart[0].productId;
-            if (cart.some(item => item.productId === 'pacote_completo')) {
-                productId = 'pacote_completo';
-            } else if (cart.some(item => item.productId === 'guia_ia')) {
-                productId = 'guia_ia';
-            }
+            let productId = cart[cart.length - 1].productId;
+            if (cart.some(item => item.productId === 'pacote_completo')) productId = 'pacote_completo';
 
             document.getElementById('loading-overlay').style.display = 'flex';
-
             try {
-                const response = await fetch('https://alva-entrega.onrender.com/create_preference', {
+                const response = await fetch(window.location.origin + '/create_preference', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email: email, product_id: productId })
                 });
-
                 const data = await response.json();
-                if (data.init_point) {
-                    window.location.href = data.init_point;
-                } else {
-                    alert('Erro ao gerar link de pagamento. Tente novamente.');
-                }
+                if (data.init_point) window.location.href = data.init_point;
+                else alert('Erro ao gerar link de pagamento.');
             } catch (error) {
-                console.error('Erro:', error);
-                alert('Erro de conexão com o servidor.');
+                alert('Erro de conexão.');
             } finally {
                 document.getElementById('loading-overlay').style.display = 'none';
             }
