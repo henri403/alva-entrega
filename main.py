@@ -108,8 +108,8 @@ def send_email_resend(customer_email, product_name, pdf_paths):
         return False
 
 def get_data_with_retry(payment_id, order_id=None):
-    """Tenta buscar os dados do cliente repetidamente por até 5 minutos"""
-    max_attempts = 10
+    """Tenta buscar os dados do cliente repetidamente por até 10 minutos"""
+    max_attempts = 20
     wait_seconds = 30
     
     for attempt in range(1, max_attempts + 1):
@@ -143,6 +143,7 @@ def get_data_with_retry(payment_id, order_id=None):
                     o_data = resp_o.json()
                     email_o = o_data.get("payer", {}).get("email")
                     if is_valid_email(email_o):
+                        # Se achou o e-mail, tenta pegar a descrição do pagamento de novo
                         return email_o, desc if 'desc' in locals() and desc else "Produto Alva Educação"
             except Exception as e:
                 logger.error(f"Erro Ordem: {e}")
@@ -170,7 +171,7 @@ def background_worker(payment_id, order_id):
         else:
             logger.error(f"Produto não mapeado: {description}")
     else:
-        logger.error(f"Desistindo do ID {payment_id} após 5 minutos.")
+        logger.error(f"Desistindo do ID {payment_id} após 10 minutos.")
 
 @app.route('/')
 def index():
@@ -186,8 +187,11 @@ def webhook():
     payment_id = None
     order_id = None
 
+    # Se for notificação de pagamento
     if data.get("type") == "payment":
         payment_id = data.get("data", {}).get("id")
+        
+    # Se for notificação de ordem (Merchant Order)
     elif data.get("type") in ["merchant_order", "topic_merchant_order_wh"]:
         order_id = data.get("data", {}).get("id") or data.get("id")
         # Busca o pagamento aprovado na ordem
@@ -195,7 +199,8 @@ def webhook():
             resp = requests.get(f"https://api.mercadopago.com/merchant_orders/{order_id}", 
                                 headers={"Authorization": f"Bearer {MP_ACCESS_TOKEN}"})
             if resp.status_code == 200:
-                for p in resp.json().get("payments", []):
+                o_info = resp.json()
+                for p in o_info.get("payments", []):
                     if p.get("status") == "approved":
                         payment_id = p.get("id")
                         break
@@ -205,6 +210,10 @@ def webhook():
         # LANÇA A TAREFA EM SEGUNDO PLANO E RESPONDE AO MERCADO PAGO NA HORA
         thread = threading.Thread(target=background_worker, args=(payment_id, order_id))
         thread.start()
+    elif order_id:
+        # Se recebemos uma ordem mas ainda não tem pagamento aprovado, 
+        # podemos lançar um worker para vigiar a ordem por um tempo
+        logger.info(f"Ordem {order_id} recebida sem pagamento aprovado ainda. Ignorando até o próximo webhook.")
 
     return jsonify({"status": "ok"}), 200
 
