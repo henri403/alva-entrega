@@ -687,44 +687,16 @@
             font-weight: 600;
         }
 
-        /* NOVO: Estilo para o campo de e-mail no carrinho */
-        .cart-email-section {
-            margin-top: 20px;
-            padding: 15px;
-            background: #f3f4f6;
-            border-radius: 10px;
-            border: 1px solid #e5e7eb;
-        }
-        .cart-email-section label {
-            display: block;
-            font-size: 12px;
-            font-weight: bold;
-            margin-bottom: 8px;
-            color: #4b5563;
-        }
-        .cart-email-section input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            font-size: 14px;
-            outline: none;
-        }
-        .cart-email-section input:focus {
-            border-color: #6366f1;
-            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
-        }
-
         .cart-total {
-            margin-top: 20px;
-            padding-top: 15px;
+            margin-top: 30px;
+            padding-top: 20px;
             border-top: 2px solid #eee;
             display: flex;
             justify-content: space-between;
             align-items: center;
             font-weight: 800;
             font-size: 18px;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
 
         .checkout-button {
@@ -742,6 +714,15 @@
 
         .checkout-button:hover {
             background: #059669;
+        }
+
+        /* Order Bump Style */
+        .order-bump {
+            border: 2px dashed #fbbf24;
+            background-color: #fffbeb;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
         }
 
         footer {
@@ -795,30 +776,17 @@
             margin-top: 10px;
         }
 
-        .loading-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255,255,255,0.8);
-            z-index: 3000;
-            justify-content: center;
-            align-items: center;
-            font-weight: bold;
-            color: #7c3aed;
-        }
-
         @media (max-width: 768px) {
             .hero h2 { font-size: 32px; }
             .benefits-grid { grid-template-columns: 1fr; }
             .stats-section { grid-template-columns: repeat(2, 1fr); }
             .modules-grid { grid-template-columns: 1fr; }
             .complete-grid { grid-template-columns: 1fr; }
+            .purchase-tabs { flex-direction: row; flex-wrap: wrap; }
         }
     </style>
 </head>
 <body>
-    <div id="loading-overlay" class="loading-overlay">Gerando link de pagamento seguro...</div>
-
     <header>
         <div class="logo-section">
             <div class="logo-container">
@@ -893,6 +861,13 @@
             <p class="section-subtitle" style="max-width: 800px; margin: 0 auto 40px auto; line-height: 1.8;">
                 Na Alva Educação, acreditamos que o sucesso em vendas e marketing não deve ser um mistério. Nosso propósito é trazer luz às estratégias que realmente funcionam, eliminando o excesso de informação e entregando o que há de mais límpido e prático no mercado. Aqui, o seu aprendizado é o despertar para uma nova performance: cursos estruturados para quem busca clareza técnica e honestidade nos métodos.
             </p>
+            
+            <div style="max-width: 1000px; margin: 0 auto; background: white; padding: 40px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05);">
+                <p style="font-size: 18px; line-height: 1.8; color: #333;">
+                    <strong>O que você leva na prática:</strong><br><br>
+                    Mais que teoria, a Alva te dá a prática de quem já chegou lá. Garanta o atalho para resultados reais replicando bastidores e estratégias validadas que geraram lucro e escala.
+                </p>
+            </div>
         </section>
 
         <section class="freedom-section">
@@ -935,7 +910,7 @@
                         <span class="old-price">R$ 32,90</span>
                         <div class="new-price">R$ 19,90</div>
                     </div>
-                    <button class="add-button" onclick="addToCart('modulo_0', 19.90, 'O Segredo das Vendas de Alto Impacto')">🛒 Adicionar</button>
+                    <button class="add-button" onclick="addToCart('O Segredo das Vendas de Alto Impacto', 19.90)">🛒 Adicionar</button>
                 </div>
 
                 <!-- Módulo 1 -->
@@ -954,7 +929,7 @@
                         <span class="old-price">R$ 32,90</span>
                         <div class="new-price">R$ 19,90</div>
                     </div>
-                    <button class="add-button" onclick="addToCart('modulo_1', 19.90, 'Construção de Relacionamentos')">🛒 Adicionar</button>
+                    <button class="add-button" onclick="addToCart('Construção de Relacionamentos', 19.90)">🛒 Adicionar</button>
                 </div>
 
                 <!-- Módulo 2 -->
@@ -962,7 +937,7 @@
                     <div class="discount-badge">-40%</div>
                     <div class="module-number">Módulo 2</div>
                     <h3 class="module-title">Prospecção e Geração de Leads</h3>
-                    <p class="module-description">Aprenda as táticas mais modernas para atrair um fluxo constante de potenciais clientes qualificados para o seu negócio.</p>
+                    <p class="module-description">Aprenda as melhores técnicas para atrair e qualificar leads, garantindo um fluxo constante de oportunidades para o seu negócio.</p>
                     <p class="highlights-label">Destaques desse módulo:</p>
                     <ul class="topic-list">
                         <li>Canais de prospecção</li>
@@ -973,7 +948,7 @@
                         <span class="old-price">R$ 32,90</span>
                         <div class="new-price">R$ 19,90</div>
                     </div>
-                    <button class="add-button" onclick="addToCart('modulo_2', 19.90, 'Prospecção e Geração de Leads')">🛒 Adicionar</button>
+                    <button class="add-button" onclick="addToCart('Prospecção e Geração de Leads', 19.90)">🛒 Adicionar</button>
                 </div>
 
                 <!-- Módulo 3 -->
@@ -981,18 +956,18 @@
                     <div class="discount-badge">-40%</div>
                     <div class="module-number">Módulo 3</div>
                     <h3 class="module-title">Qualificação de Leads e Identificação de Necessidades</h3>
-                    <p class="module-description">Domine a arte de fazer as perguntas certas para identificar as dores reais do cliente, garantindo que você ofereça exatamente o que ele precisa.</p>
+                    <p class="module-description">Não perca tempo com quem não vai comprar. Aprenda a identificar rapidamente as dores e necessidades reais do seu prospecto.</p>
                     <p class="highlights-label">Destaques desse módulo:</p>
                     <ul class="topic-list">
-                        <li>Metodologias BANT e SPIN</li>
-                        <li>Escuta ativa</li>
-                        <li>Diagnóstico de problemas</li>
+                        <li>Frameworks de qualificação</li>
+                        <li>Escuta ativa e empática</li>
+                        <li>Identificação de BANT</li>
                     </ul>
                     <div class="module-pricing">
                         <span class="old-price">R$ 32,90</span>
                         <div class="new-price">R$ 19,90</div>
                     </div>
-                    <button class="add-button" onclick="addToCart('modulo_3', 19.90, 'Qualificação de Leads e Identificação de Necessidades')">🛒 Adicionar</button>
+                    <button class="add-button" onclick="addToCart('Qualificação de Leads e Identificação de Necessidades', 19.90)">🛒 Adicionar</button>
                 </div>
 
                 <!-- Módulo 4 -->
@@ -1000,18 +975,18 @@
                     <div class="discount-badge">-40%</div>
                     <div class="module-number">Módulo 4</div>
                     <h3 class="module-title">Construção de Propostas de Valor</h3>
-                    <p class="module-description">Aprenda a estruturar ofertas tão irresistíveis que o preço se torna irrelevante diante do valor e da solução que você apresenta.</p>
+                    <p class="module-description">Transforme seu produto em uma solução irresistível. Aprenda a comunicar valor de forma clara e impactante.</p>
                     <p class="highlights-label">Destaques desse módulo:</p>
                     <ul class="topic-list">
                         <li>Diferenciação competitiva</li>
-                        <li>Anatomia da proposta</li>
-                        <li>Apresentação de ROI</li>
+                        <li>Storytelling de vendas</li>
+                        <li>Design de propostas</li>
                     </ul>
                     <div class="module-pricing">
                         <span class="old-price">R$ 32,90</span>
                         <div class="new-price">R$ 19,90</div>
                     </div>
-                    <button class="add-button" onclick="addToCart('modulo_4', 19.90, 'Construção de Propostas de Valor')">🛒 Adicionar</button>
+                    <button class="add-button" onclick="addToCart('Construção de Propostas de Valor', 19.90)">🛒 Adicionar</button>
                 </div>
 
                 <!-- Módulo 5 -->
@@ -1019,18 +994,18 @@
                     <div class="discount-badge">-40%</div>
                     <div class="module-number">Módulo 5</div>
                     <h3 class="module-title">Técnicas de Persuasão e Influência</h3>
-                    <p class="module-description">Utilize técnicas avançadas de comunicação e influência para guiar o cliente na tomada de decisão de forma ética e profissional.</p>
+                    <p class="module-description">Domine a arte de influenciar decisões de forma ética e eficaz, utilizando os princípios da persuasão moderna.</p>
                     <p class="highlights-label">Destaques desse módulo:</p>
                     <ul class="topic-list">
-                        <li>Gatilhos mentais</li>
-                        <li>Princípios de Cialdini</li>
+                        <li>Gatilhos mentais avançados</li>
                         <li>Linguagem corporal</li>
+                        <li>Poder da autoridade</li>
                     </ul>
                     <div class="module-pricing">
                         <span class="old-price">R$ 32,90</span>
                         <div class="new-price">R$ 19,90</div>
                     </div>
-                    <button class="add-button" onclick="addToCart('modulo_5', 19.90, 'Técnicas de Persuasão e Influência')">🛒 Adicionar</button>
+                    <button class="add-button" onclick="addToCart('Técnicas de Persuasão e Influência', 19.90)">🛒 Adicionar</button>
                 </div>
 
                 <!-- Módulo 6 -->
@@ -1038,18 +1013,18 @@
                     <div class="discount-badge">-40%</div>
                     <div class="module-number">Módulo 6</div>
                     <h3 class="module-title">Apresentação de Soluções e Demonstrações</h3>
-                    <p class="module-description">Transforme suas apresentações em experiências memoráveis que eliminam dúvidas e encantam o cliente, destacando sua solução.</p>
+                    <p class="module-description">Faça apresentações que vendem sozinhas. Aprenda a conduzir demonstrações que encantam e convencem.</p>
                     <p class="highlights-label">Destaques desse módulo:</p>
                     <ul class="topic-list">
-                        <li>Storytelling em vendas</li>
+                        <li>Estrutura de pitch</li>
                         <li>Demonstrações práticas</li>
-                        <li>Pitch de vendas</li>
+                        <li>Foco no benefício</li>
                     </ul>
                     <div class="module-pricing">
                         <span class="old-price">R$ 32,90</span>
                         <div class="new-price">R$ 19,90</div>
                     </div>
-                    <button class="add-button" onclick="addToCart('modulo_6', 19.90, 'Apresentação de Soluções e Demonstrações')">🛒 Adicionar</button>
+                    <button class="add-button" onclick="addToCart('Apresentação de Soluções e Demonstrações', 19.90)">🛒 Adicionar</button>
                 </div>
 
                 <!-- Módulo 7 -->
@@ -1057,18 +1032,18 @@
                     <div class="discount-badge">-40%</div>
                     <div class="module-number">Módulo 7</div>
                     <h3 class="module-title">Superação de Objeções</h3>
-                    <p class="module-description">Aprenda a antecipar e desarmar qualquer barreira de venda com elegância, transformando as dúvidas do cliente em argumentos poderosos.</p>
+                    <p class="module-description">Nunca mais trave diante de um "não". Aprenda a transformar objeções em degraus para o fechamento.</p>
                     <p class="highlights-label">Destaques desse módulo:</p>
                     <ul class="topic-list">
                         <li>Mapeamento de objeções</li>
                         <li>Técnicas de contorno</li>
-                        <li>Resiliência comercial</li>
+                        <li>Resiliência emocional</li>
                     </ul>
                     <div class="module-pricing">
                         <span class="old-price">R$ 32,90</span>
                         <div class="new-price">R$ 19,90</div>
                     </div>
-                    <button class="add-button" onclick="addToCart('modulo_7', 19.90, 'Superação de Objeções')">🛒 Adicionar</button>
+                    <button class="add-button" onclick="addToCart('Superação de Objeções', 19.90)">🛒 Adicionar</button>
                 </div>
 
                 <!-- Módulo 8 -->
@@ -1076,18 +1051,18 @@
                     <div class="discount-badge">-40%</div>
                     <div class="module-number">Módulo 8</div>
                     <h3 class="module-title">Técnicas de Fechamento</h3>
-                    <p class="module-description">Domine o momento decisivo da venda com técnicas que eliminam a hesitação e garantem o compromisso do cliente.</p>
+                    <p class="module-description">O momento da verdade. Domine as técnicas que garantem o "sim" final e concretizam a venda.</p>
                     <p class="highlights-label">Destaques desse módulo:</p>
                     <ul class="topic-list">
-                        <li>Sinais de compra</li>
-                        <li>Tipos de fechamento</li>
-                        <li>Redução de atrito</li>
+                        <li>Fechamento direto e indireto</li>
+                        <li>Urgência e escassez</li>
+                        <li>O poder do silêncio</li>
                     </ul>
                     <div class="module-pricing">
                         <span class="old-price">R$ 32,90</span>
                         <div class="new-price">R$ 19,90</div>
                     </div>
-                    <button class="add-button" onclick="addToCart('modulo_8', 19.90, 'Técnicas de Fechamento')">🛒 Adicionar</button>
+                    <button class="add-button" onclick="addToCart('Técnicas de Fechamento', 19.90)">🛒 Adicionar</button>
                 </div>
 
                 <!-- Módulo 9 -->
@@ -1095,18 +1070,18 @@
                     <div class="discount-badge">-40%</div>
                     <div class="module-number">Módulo 9</div>
                     <h3 class="module-title">Negociação e Gestão de Contratos</h3>
-                    <p class="module-description">Desenvolva a habilidade de negociar termos que maximizam seus lucros enquanto mantêm a satisfação do cliente.</p>
+                    <p class="module-description">Aprenda a negociar termos favoráveis e a gerir contratos de forma profissional e segura.</p>
                     <p class="highlights-label">Destaques desse módulo:</p>
                     <ul class="topic-list">
-                        <li>Estratégias ganha-ganha</li>
-                        <li>Gestão de concessões</li>
+                        <li>Negociação ganha-ganha</li>
                         <li>Cláusulas essenciais</li>
+                        <li>Gestão de expectativas</li>
                     </ul>
                     <div class="module-pricing">
                         <span class="old-price">R$ 32,90</span>
                         <div class="new-price">R$ 19,90</div>
                     </div>
-                    <button class="add-button" onclick="addToCart('modulo_9', 19.90, 'Negociação e Gestão de Contratos')">🛒 Adicionar</button>
+                    <button class="add-button" onclick="addToCart('Negociação e Gestão de Contratos', 19.90)">🛒 Adicionar</button>
                 </div>
 
                 <!-- Módulo 10 -->
@@ -1114,10 +1089,10 @@
                     <div class="discount-badge">-40%</div>
                     <div class="module-number">Módulo 10</div>
                     <h3 class="module-title">Follow-up e Pós-venda</h3>
-                    <p class="module-description">Descubra como manter o engajamento total do cliente após a venda, criando oportunidades de novas compras e indicações.</p>
+                    <p class="module-description">A venda não termina no fechamento. Aprenda a manter o cliente engajado e a gerar novas oportunidades.</p>
                     <p class="highlights-label">Destaques desse módulo:</p>
                     <ul class="topic-list">
-                        <li>Régua de relacionamento</li>
+                        <li>Cadência de follow-up</li>
                         <li>Customer Success</li>
                         <li>Upsell e Cross-sell</li>
                     </ul>
@@ -1125,7 +1100,7 @@
                         <span class="old-price">R$ 32,90</span>
                         <div class="new-price">R$ 19,90</div>
                     </div>
-                    <button class="add-button" onclick="addToCart('modulo_10', 19.90, 'Follow-up e Pós-venda')">🛒 Adicionar</button>
+                    <button class="add-button" onclick="addToCart('Follow-up e Pós-venda', 19.90)">🛒 Adicionar</button>
                 </div>
 
                 <!-- Módulo 11 -->
@@ -1133,18 +1108,18 @@
                     <div class="discount-badge">-40%</div>
                     <div class="module-number">Módulo 11</div>
                     <h3 class="module-title">Gestão de Pipeline e CRM</h3>
-                    <p class="module-description">Organize seu processo comercial de ponta a ponta, utilizando dados e ferramentas para ter controle total sobre cada etapa.</p>
+                    <p class="module-description">Organize seu processo de vendas. Aprenda a gerir seu funil de forma eficiente usando ferramentas de CRM.</p>
                     <p class="highlights-label">Destaques desse módulo:</p>
                     <ul class="topic-list">
                         <li>Etapas do funil</li>
-                        <li>Métricas de conversão</li>
-                        <li>Uso estratégico do CRM</li>
+                        <li>Previsão de vendas</li>
+                        <li>Higiene do CRM</li>
                     </ul>
                     <div class="module-pricing">
                         <span class="old-price">R$ 32,90</span>
                         <div class="new-price">R$ 19,90</div>
                     </div>
-                    <button class="add-button" onclick="addToCart('modulo_11', 19.90, 'Gestão de Pipeline e CRM')">🛒 Adicionar</button>
+                    <button class="add-button" onclick="addToCart('Gestão de Pipeline e CRM', 19.90)">🛒 Adicionar</button>
                 </div>
 
                 <!-- Módulo 12 -->
@@ -1152,18 +1127,18 @@
                     <div class="discount-badge">-40%</div>
                     <div class="module-number">Módulo 12</div>
                     <h3 class="module-title">Vendas Digitais e Redes Sociais</h3>
-                    <p class="module-description">Posicione-se como uma autoridade no ambiente digital e utilize as redes sociais como ferramentas estratégicas para atrair clientes.</p>
+                    <p class="module-description">Domine as vendas no mundo digital. Aprenda a usar as redes sociais para atrair e converter clientes.</p>
                     <p class="highlights-label">Destaques desse módulo:</p>
                     <ul class="topic-list">
                         <li>Social Selling</li>
+                        <li>Anúncios que vendem</li>
                         <li>Marketing de conteúdo</li>
-                        <li>Anúncios de alta conversão</li>
                     </ul>
                     <div class="module-pricing">
                         <span class="old-price">R$ 32,90</span>
                         <div class="new-price">R$ 19,90</div>
                     </div>
-                    <button class="add-button" onclick="addToCart('modulo_12', 19.90, 'Vendas Digitais e Redes Sociais')">🛒 Adicionar</button>
+                    <button class="add-button" onclick="addToCart('Vendas Digitais e Redes Sociais', 19.90)">🛒 Adicionar</button>
                 </div>
 
                 <!-- Módulo 13 -->
@@ -1182,7 +1157,7 @@
                         <span class="old-price">R$ 32,90</span>
                         <div class="new-price">R$ 19,90</div>
                     </div>
-                    <button class="add-button" onclick="addToCart('modulo_13', 19.90, 'Análise de Dados e Métricas')">🛒 Adicionar</button>
+                    <button class="add-button" onclick="addToCart('Análise de Dados e Métricas', 19.90)">🛒 Adicionar</button>
                 </div>
 
                 <!-- Módulo 14 -->
@@ -1201,7 +1176,7 @@
                         <span class="old-price">R$ 32,90</span>
                         <div class="new-price">R$ 19,90</div>
                     </div>
-                    <button class="add-button" onclick="addToCart('modulo_14', 19.90, 'Liderança em Vendas')">🛒 Adicionar</button>
+                    <button class="add-button" onclick="addToCart('Liderança em Vendas', 19.90)">🛒 Adicionar</button>
                 </div>
 
                 <!-- Módulo 15 -->
@@ -1220,7 +1195,7 @@
                         <span class="old-price">R$ 32,90</span>
                         <div class="new-price">R$ 19,90</div>
                     </div>
-                    <button class="add-button" onclick="addToCart('modulo_15', 19.90, 'Tendências Futuras e Inovação')">🛒 Adicionar</button>
+                    <button class="add-button" onclick="addToCart('Tendências Futuras e Inovação', 19.90)">🛒 Adicionar</button>
                 </div>
             </div>
 
@@ -1247,7 +1222,7 @@
                         <span class="old-price">R$ 318,40</span>
                         <div class="new-price">R$ 46,40</div>
                     </div>
-                    <button class="btn-buy" onclick="addToCart('pacote_completo', 46.40, 'Pacote Completo (16 Módulos)')">🛒 COMPRAR PACOTE COMPLETO</button>
+                    <button class="btn-buy" onclick="addToCart('Pacote Completo (16 Módulos)', 46.40)">🛒 ADICIONAR AO CARRINHO</button>
                 </div>
 
                 <!-- Guia de IA -->
@@ -1271,7 +1246,7 @@
                         <span class="old-price">R$ 46,50</span>
                         <div class="new-price">R$ 34,90</div>
                     </div>
-                    <button class="btn-buy" onclick="addToCart('guia_ia', 34.90, 'Guia de IA para Negócios')">🛒 COMPRAR GUIA DE IA</button>
+                    <button class="btn-buy" onclick="addToCart('Guia de IA para Negócios', 34.90)">🛒 ADICIONAR AO CARRINHO</button>
                 </div>
             </div>
         </section>
@@ -1284,21 +1259,30 @@
                 <h3>Seu Carrinho</h3>
                 <span class="close-cart" onclick="toggleCart()">×</span>
             </div>
+            
             <div id="cart-items-list" class="cart-items">
                 <!-- Itens do carrinho aqui -->
             </div>
 
-            <!-- NOVO: Campo de E-mail dentro do Carrinho -->
-            <div class="cart-email-section">
-                <label for="customer-email">E-mail para receber o material:</label>
-                <input type="email" id="customer-email" placeholder="seu@email.com" required>
+            <!-- Order Bump Area -->
+            <div id="order-bump-area" style="display: none;">
+                <div class="order-bump">
+                    <h4 style="font-size: 14px; font-weight: bold; color: #b45309; margin-bottom: 5px;">🚀 OFERTA ESPECIAL!</h4>
+                    <p style="font-size: 12px; color: #666; margin-bottom: 10px;">Adicione o <b>Guia de IA para Negócios</b> por apenas <b>R$ 34,90</b> e acelere seus resultados!</p>
+                    <button onclick="addToCart('Guia de IA para Negócios', 34.90)" style="background: #fbbf24; color: #1e1b4b; border: none; padding: 8px 15px; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer;">Sim, eu quero!</button>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px;">
+                <label style="display: block; font-size: 12px; font-weight: bold; margin-bottom: 5px;">E-mail para entrega do PDF:</label>
+                <input type="email" id="customer-email" placeholder="seu@email.com" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 15px; outline: none;">
             </div>
 
             <div class="cart-total">
                 <span>Total:</span>
                 <span id="cart-total-value">R$ 0,00</span>
             </div>
-            <button class="checkout-button" onclick="checkout()">Finalizar Compra</button>
+            <button class="checkout-button" id="checkout-btn" onclick="checkout()">Finalizar Compra</button>
             <p style="text-align: center; font-size: 12px; color: #999; margin-top: 15px;">Pagamento seguro via Mercado Pago</p>
         </div>
     </div>
@@ -1328,14 +1312,18 @@
             document.getElementById('savings-msg').style.display = tab === 'complete' ? 'block' : 'none';
         }
 
-        function addToCart(id, price, name) {
-            cart.push({ id: Date.now(), productId: id, name, price });
-            localStorage.setItem('alva_cart', JSON.stringify(cart));
-            updateCartUI();
-            const badge = document.getElementById('cart-badge');
-            badge.style.transform = 'scale(1.5)';
-            setTimeout(() => badge.style.transform = 'scale(1)', 200);
-            toggleCart();
+        function addToCart(name, price) {
+            const exists = cart.find(item => item.name === name);
+            if (!exists) {
+                cart.push({ id: Date.now(), name, price });
+                localStorage.setItem('alva_cart', JSON.stringify(cart));
+                updateCartUI();
+            }
+            
+            const modal = document.getElementById('cart-modal');
+            if (modal.style.display !== 'flex') {
+                toggleCart();
+            }
         }
 
         function removeFromCart(id) {
@@ -1348,6 +1336,7 @@
             const badge = document.getElementById('cart-badge');
             const list = document.getElementById('cart-items-list');
             const totalSpan = document.getElementById('cart-total-value');
+            const bumpArea = document.getElementById('order-bump-area');
             
             badge.textContent = cart.length;
             badge.style.display = cart.length > 0 ? 'block' : 'none';
@@ -1355,6 +1344,7 @@
             if (cart.length === 0) {
                 list.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">Seu carrinho está vazio.</p>';
                 totalSpan.textContent = 'R$ 0,00';
+                bumpArea.style.display = 'none';
             } else {
                 let total = 0;
                 list.innerHTML = cart.map(item => {
@@ -1370,6 +1360,11 @@
                     `;
                 }).join('');
                 totalSpan.textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
+
+                // Order Bump Logic
+                const hasPacote = cart.some(item => item.name.includes('Pacote Completo'));
+                const hasIA = cart.some(item => item.name.includes('Guia de IA'));
+                bumpArea.style.display = (hasPacote && !hasIA) ? 'block' : 'none';
             }
         }
 
@@ -1380,46 +1375,52 @@
 
         async function checkout() {
             const email = document.getElementById('customer-email').value;
+            const btn = document.getElementById('checkout-btn');
+            
             if (!email || !email.includes('@')) {
-                alert("Por favor, digite um e-mail válido no carrinho para receber seu material.");
-                document.getElementById('customer-email').focus();
+                alert('Por favor, insira um e-mail válido para receber o PDF.');
                 return;
             }
 
             if (cart.length === 0) {
-                alert("Seu carrinho está vazio!");
+                alert('Seu carrinho está vazio.');
                 return;
             }
 
-            let productId = cart[0].productId;
-            if (cart.length > 1) {
-                if (confirm("Para múltiplos itens, recomendamos o Pacote Completo com desconto. Deseja ir para o Pacote Completo?")) {
-                    productId = 'pacote_completo';
-                }
-            }
-
-            document.getElementById('loading-overlay').style.display = 'flex';
+            btn.disabled = true;
+            btn.innerHTML = 'Processando...';
 
             try {
                 const response = await fetch('/create_preference', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: email, product_id: productId })
+                    body: JSON.stringify({
+                        email: email,
+                        items: cart.map(item => ({
+                            id: item.name,
+                            title: item.name,
+                            unit_price: item.price,
+                            quantity: 1
+                        }))
+                    })
                 });
 
                 const data = await response.json();
                 if (data.init_point) {
                     window.location.href = data.init_point;
                 } else {
-                    alert('Erro ao gerar link de pagamento. Tente novamente.');
+                    alert('Erro ao gerar pagamento. Tente novamente.');
+                    btn.disabled = false;
+                    btn.innerHTML = 'Finalizar Compra';
                 }
             } catch (error) {
-                console.error('Erro:', error);
-                alert('Erro de conexão com o servidor.');
-            } finally {
-                document.getElementById('loading-overlay').style.display = 'none';
+                console.error(error);
+                alert('Erro de conexão. Tente novamente.');
+                btn.disabled = false;
+                btn.innerHTML = 'Finalizar Compra';
             }
         }
+
         updateCartUI();
     </script>
 </body>
