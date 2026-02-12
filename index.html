@@ -197,49 +197,6 @@
             margin-bottom: 40px;
         }
 
-        .testimonials-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 30px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .testimonial-card {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-        }
-
-        .stars {
-            color: #fbbf24;
-            margin-bottom: 15px;
-        }
-
-        .testimonial-text {
-            font-style: italic;
-            color: #444;
-            margin-bottom: 20px;
-        }
-
-        .testimonial-author {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .author-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-        }
-
         .freedom-section {
             padding: 80px 40px;
             background: linear-gradient(135deg, #f8f9fa 0%, #f0f0f5 100%);
@@ -456,7 +413,6 @@
             background: #4f46e5;
         }
 
-        /* Estilos específicos para Pacotes Completos */
         .complete-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -731,16 +687,44 @@
             font-weight: 600;
         }
 
+        /* NOVO: Estilo para o campo de e-mail no carrinho */
+        .cart-email-section {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f3f4f6;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+        }
+        .cart-email-section label {
+            display: block;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #4b5563;
+        }
+        .cart-email-section input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+        }
+        .cart-email-section input:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
+        }
+
         .cart-total {
-            margin-top: 30px;
-            padding-top: 20px;
+            margin-top: 20px;
+            padding-top: 15px;
             border-top: 2px solid #eee;
             display: flex;
             justify-content: space-between;
             align-items: center;
             font-weight: 800;
             font-size: 18px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .checkout-button {
@@ -811,18 +795,30 @@
             margin-top: 10px;
         }
 
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.8);
+            z-index: 3000;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            color: #7c3aed;
+        }
+
         @media (max-width: 768px) {
             .hero h2 { font-size: 32px; }
             .benefits-grid { grid-template-columns: 1fr; }
             .stats-section { grid-template-columns: repeat(2, 1fr); }
-            .testimonials-grid { grid-template-columns: 1fr; }
             .modules-grid { grid-template-columns: 1fr; }
             .complete-grid { grid-template-columns: 1fr; }
-            .purchase-tabs { flex-direction: row; flex-wrap: wrap; }
         }
     </style>
 </head>
 <body>
+    <div id="loading-overlay" class="loading-overlay">Gerando link de pagamento seguro...</div>
+
     <header>
         <div class="logo-section">
             <div class="logo-container">
@@ -897,13 +893,6 @@
             <p class="section-subtitle" style="max-width: 800px; margin: 0 auto 40px auto; line-height: 1.8;">
                 Na Alva Educação, acreditamos que o sucesso em vendas e marketing não deve ser um mistério. Nosso propósito é trazer luz às estratégias que realmente funcionam, eliminando o excesso de informação e entregando o que há de mais límpido e prático no mercado. Aqui, o seu aprendizado é o despertar para uma nova performance: cursos estruturados para quem busca clareza técnica e honestidade nos métodos.
             </p>
-            
-            <div style="max-width: 1000px; margin: 0 auto; background: white; padding: 40px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05);">
-                <p style="font-size: 18px; line-height: 1.8; color: #333;">
-                    <strong>O que você leva na prática:</strong><br><br>
-                    Mais que teoria, a Alva te dá a prática de quem já chegou lá. Garanta o atalho para resultados reais replicando bastidores e estratégias validadas que geraram lucro e escala.
-                </p>
-            </div>
         </section>
 
         <section class="freedom-section">
@@ -946,7 +935,7 @@
                         <span class="old-price">R$ 32,90</span>
                         <div class="new-price">R$ 19,90</div>
                     </div>
-                    <button class="add-button" onclick="addToCart('O Segredo das Vendas de Alto Impacto', 19.90)">🛒 Adicionar</button>
+                    <button class="add-button" onclick="addToCart('modulo_0', 19.90, 'O Segredo das Vendas de Alto Impacto')">🛒 Adicionar</button>
                 </div>
 
                 <!-- Módulo 1 -->
@@ -965,7 +954,7 @@
                         <span class="old-price">R$ 32,90</span>
                         <div class="new-price">R$ 19,90</div>
                     </div>
-                    <button class="add-button" onclick="addToCart('Construção de Relacionamentos', 19.90)">🛒 Adicionar</button>
+                    <button class="add-button" onclick="addToCart('modulo_1', 19.90, 'Construção de Relacionamentos')">🛒 Adicionar</button>
                 </div>
 
                 <!-- Módulo 2 -->
@@ -973,7 +962,7 @@
                     <div class="discount-badge">-40%</div>
                     <div class="module-number">Módulo 2</div>
                     <h3 class="module-title">Prospecção e Geração de Leads</h3>
-                    <p class="module-description">Aprenda a criar um fluxo constante de potenciais clientes qualificados, utilizando estratégias modernas para nunca mais ficar sem oportunidades.</p>
+                    <p class="module-description">Aprenda as táticas mais modernas para atrair um fluxo constante de potenciais clientes qualificados para o seu negócio.</p>
                     <p class="highlights-label">Destaques desse módulo:</p>
                     <ul class="topic-list">
                         <li>Canais de prospecção</li>
@@ -984,7 +973,7 @@
                         <span class="old-price">R$ 32,90</span>
                         <div class="new-price">R$ 19,90</div>
                     </div>
-                    <button class="add-button" onclick="addToCart('Prospecção e Geração de Leads', 19.90)">🛒 Adicionar</button>
+                    <button class="add-button" onclick="addToCart('modulo_2', 19.90, 'Prospecção e Geração de Leads')">🛒 Adicionar</button>
                 </div>
 
                 <!-- Módulo 3 -->
@@ -1003,7 +992,7 @@
                         <span class="old-price">R$ 32,90</span>
                         <div class="new-price">R$ 19,90</div>
                     </div>
-                    <button class="add-button" onclick="addToCart('Qualificação de Leads e Identificação de Necessidades', 19.90)">🛒 Adicionar</button>
+                    <button class="add-button" onclick="addToCart('modulo_3', 19.90, 'Qualificação de Leads e Identificação de Necessidades')">🛒 Adicionar</button>
                 </div>
 
                 <!-- Módulo 4 -->
@@ -1022,7 +1011,7 @@
                         <span class="old-price">R$ 32,90</span>
                         <div class="new-price">R$ 19,90</div>
                     </div>
-                    <button class="add-button" onclick="addToCart('Construção de Propostas de Valor', 19.90)">🛒 Adicionar</button>
+                    <button class="add-button" onclick="addToCart('modulo_4', 19.90, 'Construção de Propostas de Valor')">🛒 Adicionar</button>
                 </div>
 
                 <!-- Módulo 5 -->
@@ -1041,7 +1030,7 @@
                         <span class="old-price">R$ 32,90</span>
                         <div class="new-price">R$ 19,90</div>
                     </div>
-                    <button class="add-button" onclick="addToCart('Técnicas de Persuasão e Influência', 19.90)">🛒 Adicionar</button>
+                    <button class="add-button" onclick="addToCart('modulo_5', 19.90, 'Técnicas de Persuasão e Influência')">🛒 Adicionar</button>
                 </div>
 
                 <!-- Módulo 6 -->
@@ -1060,7 +1049,7 @@
                         <span class="old-price">R$ 32,90</span>
                         <div class="new-price">R$ 19,90</div>
                     </div>
-                    <button class="add-button" onclick="addToCart('Apresentação de Soluções e Demonstrações', 19.90)">🛒 Adicionar</button>
+                    <button class="add-button" onclick="addToCart('modulo_6', 19.90, 'Apresentação de Soluções e Demonstrações')">🛒 Adicionar</button>
                 </div>
 
                 <!-- Módulo 7 -->
@@ -1079,7 +1068,7 @@
                         <span class="old-price">R$ 32,90</span>
                         <div class="new-price">R$ 19,90</div>
                     </div>
-                    <button class="add-button" onclick="addToCart('Superação de Objeções', 19.90)">🛒 Adicionar</button>
+                    <button class="add-button" onclick="addToCart('modulo_7', 19.90, 'Superação de Objeções')">🛒 Adicionar</button>
                 </div>
 
                 <!-- Módulo 8 -->
@@ -1098,7 +1087,7 @@
                         <span class="old-price">R$ 32,90</span>
                         <div class="new-price">R$ 19,90</div>
                     </div>
-                    <button class="add-button" onclick="addToCart('Técnicas de Fechamento', 19.90)">🛒 Adicionar</button>
+                    <button class="add-button" onclick="addToCart('modulo_8', 19.90, 'Técnicas de Fechamento')">🛒 Adicionar</button>
                 </div>
 
                 <!-- Módulo 9 -->
@@ -1117,7 +1106,7 @@
                         <span class="old-price">R$ 32,90</span>
                         <div class="new-price">R$ 19,90</div>
                     </div>
-                    <button class="add-button" onclick="addToCart('Negociação e Gestão de Contratos', 19.90)">🛒 Adicionar</button>
+                    <button class="add-button" onclick="addToCart('modulo_9', 19.90, 'Negociação e Gestão de Contratos')">🛒 Adicionar</button>
                 </div>
 
                 <!-- Módulo 10 -->
@@ -1136,7 +1125,7 @@
                         <span class="old-price">R$ 32,90</span>
                         <div class="new-price">R$ 19,90</div>
                     </div>
-                    <button class="add-button" onclick="addToCart('Follow-up e Pós-venda', 19.90)">🛒 Adicionar</button>
+                    <button class="add-button" onclick="addToCart('modulo_10', 19.90, 'Follow-up e Pós-venda')">🛒 Adicionar</button>
                 </div>
 
                 <!-- Módulo 11 -->
@@ -1155,7 +1144,7 @@
                         <span class="old-price">R$ 32,90</span>
                         <div class="new-price">R$ 19,90</div>
                     </div>
-                    <button class="add-button" onclick="addToCart('Gestão de Pipeline e CRM', 19.90)">🛒 Adicionar</button>
+                    <button class="add-button" onclick="addToCart('modulo_11', 19.90, 'Gestão de Pipeline e CRM')">🛒 Adicionar</button>
                 </div>
 
                 <!-- Módulo 12 -->
@@ -1167,14 +1156,14 @@
                     <p class="highlights-label">Destaques desse módulo:</p>
                     <ul class="topic-list">
                         <li>Social Selling</li>
-                        <li>Personal Branding</li>
-                        <li>Vendas via WhatsApp</li>
+                        <li>Marketing de conteúdo</li>
+                        <li>Anúncios de alta conversão</li>
                     </ul>
                     <div class="module-pricing">
                         <span class="old-price">R$ 32,90</span>
                         <div class="new-price">R$ 19,90</div>
                     </div>
-                    <button class="add-button" onclick="addToCart('Vendas Digitais e Redes Sociais', 19.90)">🛒 Adicionar</button>
+                    <button class="add-button" onclick="addToCart('modulo_12', 19.90, 'Vendas Digitais e Redes Sociais')">🛒 Adicionar</button>
                 </div>
 
                 <!-- Módulo 13 -->
@@ -1193,7 +1182,7 @@
                         <span class="old-price">R$ 32,90</span>
                         <div class="new-price">R$ 19,90</div>
                     </div>
-                    <button class="add-button" onclick="addToCart('Análise de Dados e Métricas', 19.90)">🛒 Adicionar</button>
+                    <button class="add-button" onclick="addToCart('modulo_13', 19.90, 'Análise de Dados e Métricas')">🛒 Adicionar</button>
                 </div>
 
                 <!-- Módulo 14 -->
@@ -1212,7 +1201,7 @@
                         <span class="old-price">R$ 32,90</span>
                         <div class="new-price">R$ 19,90</div>
                     </div>
-                    <button class="add-button" onclick="addToCart('Liderança em Vendas', 19.90)">🛒 Adicionar</button>
+                    <button class="add-button" onclick="addToCart('modulo_14', 19.90, 'Liderança em Vendas')">🛒 Adicionar</button>
                 </div>
 
                 <!-- Módulo 15 -->
@@ -1231,7 +1220,7 @@
                         <span class="old-price">R$ 32,90</span>
                         <div class="new-price">R$ 19,90</div>
                     </div>
-                    <button class="add-button" onclick="addToCart('Tendências Futuras e Inovação', 19.90)">🛒 Adicionar</button>
+                    <button class="add-button" onclick="addToCart('modulo_15', 19.90, 'Tendências Futuras e Inovação')">🛒 Adicionar</button>
                 </div>
             </div>
 
@@ -1258,7 +1247,7 @@
                         <span class="old-price">R$ 318,40</span>
                         <div class="new-price">R$ 46,40</div>
                     </div>
-                    <button class="btn-buy" onclick="addToCart('Pacote Completo (16 Módulos)', 46.40)">🛒 COMPRAR PACOTE COMPLETO</button>
+                    <button class="btn-buy" onclick="addToCart('pacote_completo', 46.40, 'Pacote Completo (16 Módulos)')">🛒 COMPRAR PACOTE COMPLETO</button>
                 </div>
 
                 <!-- Guia de IA -->
@@ -1282,7 +1271,7 @@
                         <span class="old-price">R$ 46,50</span>
                         <div class="new-price">R$ 34,90</div>
                     </div>
-                    <button class="btn-buy" onclick="addToCart('Guia de IA para Negócios', 34.90)">🛒 COMPRAR GUIA DE IA</button>
+                    <button class="btn-buy" onclick="addToCart('guia_ia', 34.90, 'Guia de IA para Negócios')">🛒 COMPRAR GUIA DE IA</button>
                 </div>
             </div>
         </section>
@@ -1298,6 +1287,13 @@
             <div id="cart-items-list" class="cart-items">
                 <!-- Itens do carrinho aqui -->
             </div>
+
+            <!-- NOVO: Campo de E-mail dentro do Carrinho -->
+            <div class="cart-email-section">
+                <label for="customer-email">E-mail para receber o material:</label>
+                <input type="email" id="customer-email" placeholder="seu@email.com" required>
+            </div>
+
             <div class="cart-total">
                 <span>Total:</span>
                 <span id="cart-total-value">R$ 0,00</span>
@@ -1324,27 +1320,6 @@
     <script>
         let cart = JSON.parse(localStorage.getItem('alva_cart')) || [];
 
-        const paymentLinks = {
-            'O Segredo das Vendas de Alto Impacto': 'https://mpago.la/1yFBfUP',
-            'Construção de Relacionamentos': 'https://mpago.la/347zNUZ',
-            'Prospecção e Geração de Leads': 'https://mpago.la/1yP5uJa',
-            'Qualificação de Leads e Identificação de Necessidades': 'https://mpago.la/1XUpiD5',
-            'Construção de Propostas de Valor': 'https://mpago.la/2PTKBKL',
-            'Técnicas de Persuasão e Influência': 'https://mpago.la/1tgm2pP',
-            'Apresentação de Soluções e Demonstrações': 'https://mpago.la/2cuJPvR',
-            'Superação de Objeções': 'https://mpago.la/2nLVj5X',
-            'Técnicas de Fechamento': 'https://mpago.la/29njCE5',
-            'Negociação e Gestão de Contratos': 'https://mpago.la/2VHHaAZ',
-            'Follow-up e Pós-venda': 'https://mpago.la/2UUnEwo',
-            'Gestão de Pipeline e CRM': 'https://mpago.la/31sxc4G',
-            'Vendas Digitais e Redes Sociais': 'https://mpago.la/1pQioJX',
-            'Análise de Dados e Métricas': 'https://mpago.la/1RTYocx',
-            'Liderança em Vendas': 'https://mpago.la/1JUrFzU',
-            'Tendências Futuras e Inovação': 'https://mpago.la/2mN8N9E',
-            'Pacote Completo (16 Módulos)': 'https://mpago.la/2vtDMN7',
-            'Guia de IA para Negócios': 'https://mpago.la/2zMvsQS'
-        };
-
         function switchTab(tab) {
             document.getElementById('grid-individual').style.display = tab === 'individual' ? 'grid' : 'none';
             document.getElementById('grid-complete').style.display = tab === 'complete' ? 'grid' : 'none';
@@ -1353,8 +1328,8 @@
             document.getElementById('savings-msg').style.display = tab === 'complete' ? 'block' : 'none';
         }
 
-        function addToCart(name, price) {
-            cart.push({ id: Date.now(), name, price });
+        function addToCart(id, price, name) {
+            cart.push({ id: Date.now(), productId: id, name, price });
             localStorage.setItem('alva_cart', JSON.stringify(cart));
             updateCartUI();
             const badge = document.getElementById('cart-badge');
@@ -1403,22 +1378,46 @@
             modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
         }
 
-        function checkout() {
+        async function checkout() {
+            const email = document.getElementById('customer-email').value;
+            if (!email || !email.includes('@')) {
+                alert("Por favor, digite um e-mail válido no carrinho para receber seu material.");
+                document.getElementById('customer-email').focus();
+                return;
+            }
+
             if (cart.length === 0) {
                 alert("Seu carrinho está vazio!");
                 return;
             }
-            if (cart.length === 1) {
-                const link = paymentLinks[cart[0].name];
-                if (link) {
-                    window.location.href = link;
-                } else {
-                    alert("Erro ao processar o link de pagamento.");
-                }
-            } else {
+
+            let productId = cart[0].productId;
+            if (cart.length > 1) {
                 if (confirm("Para múltiplos itens, recomendamos o Pacote Completo com desconto. Deseja ir para o Pacote Completo?")) {
-                    window.location.href = paymentLinks['Pacote Completo (16 Módulos)'];
+                    productId = 'pacote_completo';
                 }
+            }
+
+            document.getElementById('loading-overlay').style.display = 'flex';
+
+            try {
+                const response = await fetch('/create_preference', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email, product_id: productId })
+                });
+
+                const data = await response.json();
+                if (data.init_point) {
+                    window.location.href = data.init_point;
+                } else {
+                    alert('Erro ao gerar link de pagamento. Tente novamente.');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro de conexão com o servidor.');
+            } finally {
+                document.getElementById('loading-overlay').style.display = 'none';
             }
         }
         updateCartUI();
