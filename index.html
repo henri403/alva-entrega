@@ -500,6 +500,7 @@
             border-radius: 4px;
             font-size: 14px;
             margin-bottom: 20px;
+            font-weight: 900; /* BOLD EMPHASIS */
         }
 
         .package-card .package-desc {
@@ -527,7 +528,7 @@
 
         .package-card .highlights-title {
             font-size: 14px;
-            font-weight: bold;
+            font-weight: 900; /* BOLD EMPHASIS */
             margin-bottom: 18px;
             color: #1a1a1a;
         }
@@ -1416,7 +1417,6 @@
 
         function toggleBump() {
             const checkbox = document.getElementById('bump-checkbox');
-            // Se clicou no container, inverte o checkbox manualmente antes da lógica
             if (event.target.type !== 'checkbox') {
                 checkbox.checked = !checkbox.checked;
             }
@@ -1462,7 +1462,6 @@
                 }).join('');
                 totalSpan.textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
 
-                // Lógica do Order Bump
                 const hasComplete = cart.find(item => item.productId === 'pacote_completo');
                 const hasIA = cart.find(item => item.productId === 'guia_ia');
                 
@@ -1496,7 +1495,6 @@
                 return;
             }
 
-            // Para o checkout, enviamos o produto principal ou o pacote
             let productId = cart[0].productId;
             if (cart.find(item => item.productId === 'pacote_completo')) {
                 productId = 'pacote_completo';
