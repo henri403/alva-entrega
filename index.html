@@ -686,7 +686,57 @@
             font-weight: 600;
         }
 
-        /* NOVO: Estilo para o campo de e-mail no carrinho */
+        /* Order Bump Style */
+        .order-bump {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            background: #fffbeb;
+            border: 2px dashed #fbbf24;
+            border-radius: 10px;
+        }
+
+        .order-bump-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .order-bump-title {
+            font-weight: 800;
+            color: #92400e;
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+
+        .order-bump-desc {
+            font-size: 12px;
+            color: #b45309;
+            line-height: 1.4;
+            margin-bottom: 10px;
+        }
+
+        .order-bump-checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .order-bump-checkbox-container input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .order-bump-checkbox-container label {
+            font-size: 13px;
+            font-weight: 700;
+            color: #1a1a1a;
+            cursor: pointer;
+        }
+
         .cart-email-section {
             margin-top: 20px;
             padding: 15px;
@@ -712,46 +762,6 @@
         .cart-email-section input:focus {
             border-color: #6366f1;
             box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
-        }
-
-        /* NOVO: Estilo para o Order Bump */
-        .order-bump {
-            margin-top: 15px;
-            padding: 15px;
-            background: #fffbeb;
-            border: 2px dashed #fbbf24;
-            border-radius: 10px;
-            display: none;
-        }
-        .order-bump-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 8px;
-        }
-        .order-bump-title {
-            font-size: 13px;
-            font-weight: 800;
-            color: #92400e;
-        }
-        .order-bump-desc {
-            font-size: 12px;
-            color: #b45309;
-            margin-bottom: 10px;
-        }
-        .order-bump-action {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 12px;
-            font-weight: bold;
-            color: #1a1a1a;
-            cursor: pointer;
-        }
-        .order-bump-action input {
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
         }
 
         .cart-total {
@@ -818,6 +828,7 @@
         }
 
         footer p {
+            font-size: 14px;
             opacity: 0.8;
         }
 
@@ -950,13 +961,13 @@
                 <p class="section-subtitle">Selecione apenas os módulos que você precisa ou adquira o pacote completo com desconto</p>
                 
                 <div class="purchase-tabs">
-                    <button id="btn-individual" class="tab-button active" onclick="switchTab('individual')">📦 Módulos Individuais</button>
-                    <button id="btn-complete" class="tab-button" onclick="switchTab('complete')">🎁 Pacotes Completos</button>
+                    <button id="btn-complete" class="tab-button active" onclick="switchTab('complete')">🎁 Pacotes Completos</button>
+                    <button id="btn-individual" class="tab-button" onclick="switchTab('individual')">📦 Módulos Individuais</button>
                 </div>
-                <p id="savings-msg" style="color: #6366f1; font-weight: bold; margin-top: -10px; margin-bottom: 30px; display: none;">Economize mais adquirindo pacotes completos com todos os cursos</p>
+                <p id="savings-msg" style="color: #6366f1; font-weight: bold; margin-top: -10px; margin-bottom: 30px; display: block;">Economize mais adquirindo pacotes completos com todos os cursos</p>
             </div>
 
-            <div id="grid-individual" class="modules-grid">
+            <div id="grid-individual" class="modules-grid" style="display: none;">
                 <!-- Módulo 0 -->
                 <div class="module-card">
                     <div class="discount-badge">-40%</div>
@@ -1262,7 +1273,7 @@
                 </div>
             </div>
 
-            <div id="grid-complete" class="complete-grid" style="display: none;">
+            <div id="grid-complete" class="complete-grid">
                 <!-- Pacote Completo -->
                 <div class="package-card complete">
                     <div class="badge-complete">MELHOR VALOR</div>
@@ -1285,7 +1296,7 @@
                         <span class="old-price">R$ 318,40</span>
                         <div class="new-price">R$ 46,40</div>
                     </div>
-                    <button class="btn-buy" onclick="addToCart('pacote_completo', 46.40, 'Pacote Completo (16 Módulos)')">🛒 ADICIONAR AO CARRINHO</button>
+                    <button class="btn-buy" onclick="addToCart('pacote_completo', 46.40, 'Pacote Completo (16 Módulos)')">🛒 COMPRAR PACOTE COMPLETO</button>
                 </div>
 
                 <!-- Guia de IA -->
@@ -1309,7 +1320,7 @@
                         <span class="old-price">R$ 46,50</span>
                         <div class="new-price">R$ 34,90</div>
                     </div>
-                    <button class="btn-buy" onclick="addToCart('guia_ia', 34.90, 'Guia de IA para Negócios')">🛒 ADICIONAR AO CARRINHO</button>
+                    <button class="btn-buy" onclick="addToCart('guia_ia', 34.90, 'Guia de IA para Negócios')">🛒 COMPRAR GUIA DE IA</button>
                 </div>
             </div>
         </section>
@@ -1326,20 +1337,19 @@
                 <!-- Itens do carrinho aqui -->
             </div>
 
-            <!-- NOVO: Order Bump -->
+            <!-- Order Bump (Upsell) -->
             <div id="order-bump" class="order-bump">
                 <div class="order-bump-header">
-                    <span style="font-size: 20px;">🎁</span>
+                    <span>🎁</span>
                     <span class="order-bump-title">OFERTA EXCLUSIVA!</span>
                 </div>
                 <p class="order-bump-desc">Adicione o <strong>Guia de IA para Negócios</strong> por apenas <strong>R$ 34,90</strong> e acelere seus resultados!</p>
-                <label class="order-bump-action">
-                    <input type="checkbox" id="bump-checkbox" onchange="handleBumpChange()">
-                    Sim, eu quero o Guia de IA!
-                </label>
+                <div class="order-bump-checkbox-container" onclick="toggleBump()">
+                    <input type="checkbox" id="bump-checkbox">
+                    <label for="bump-checkbox">Sim, eu quero o Guia de IA!</label>
+                </div>
             </div>
 
-            <!-- NOVO: Campo de E-mail dentro do Carrinho -->
             <div class="cart-email-section">
                 <label for="customer-email">E-mail para receber o material:</label>
                 <input type="email" id="customer-email" placeholder="seu@email.com" required>
@@ -1380,17 +1390,18 @@
         }
 
         function addToCart(id, price, name) {
-            if (cart.some(item => item.productId === id)) {
+            const exists = cart.find(item => item.productId === id);
+            if (!exists) {
+                cart.push({ id: Date.now(), productId: id, name, price });
+                localStorage.setItem('alva_cart', JSON.stringify(cart));
+                updateCartUI();
+                const badge = document.getElementById('cart-badge');
+                badge.style.transform = 'scale(1.5)';
+                setTimeout(() => badge.style.transform = 'scale(1)', 200);
                 toggleCart();
-                return;
+            } else {
+                toggleCart();
             }
-            cart.push({ id: Date.now(), productId: id, name, price });
-            localStorage.setItem('alva_cart', JSON.stringify(cart));
-            updateCartUI();
-            const badge = document.getElementById('cart-badge');
-            badge.style.transform = 'scale(1.5)';
-            setTimeout(() => badge.style.transform = 'scale(1)', 200);
-            toggleCart();
         }
 
         function removeFromCart(id) {
@@ -1403,10 +1414,15 @@
             updateCartUI();
         }
 
-        function handleBumpChange() {
+        function toggleBump() {
             const checkbox = document.getElementById('bump-checkbox');
+            // Se clicou no container, inverte o checkbox manualmente antes da lógica
+            if (event.target.type !== 'checkbox') {
+                checkbox.checked = !checkbox.checked;
+            }
+            
             if (checkbox.checked) {
-                if (!cart.some(item => item.productId === 'guia_ia')) {
+                if (!cart.find(item => item.productId === 'guia_ia')) {
                     cart.push({ id: Date.now(), productId: 'guia_ia', name: 'Guia de IA para Negócios', price: 34.90 });
                 }
             } else {
@@ -1420,27 +1436,16 @@
             const badge = document.getElementById('cart-badge');
             const list = document.getElementById('cart-items-list');
             const totalSpan = document.getElementById('cart-total-value');
-            const bumpSection = document.getElementById('order-bump');
+            const orderBump = document.getElementById('order-bump');
+            const bumpCheckbox = document.getElementById('bump-checkbox');
             
             badge.textContent = cart.length;
             badge.style.display = cart.length > 0 ? 'block' : 'none';
             
-            const hasPackage = cart.some(item => item.productId === 'pacote_completo');
-            const hasIA = cart.some(item => item.productId === 'guia_ia');
-            
-            if (hasPackage && !hasIA) {
-                bumpSection.style.display = 'block';
-            } else {
-                bumpSection.style.display = 'none';
-                if (hasIA) {
-                    const cb = document.getElementById('bump-checkbox');
-                    if (cb) cb.checked = true;
-                }
-            }
-            
             if (cart.length === 0) {
                 list.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">Seu carrinho está vazio.</p>';
                 totalSpan.textContent = 'R$ 0,00';
+                orderBump.style.display = 'none';
             } else {
                 let total = 0;
                 list.innerHTML = cart.map(item => {
@@ -1456,6 +1461,20 @@
                     `;
                 }).join('');
                 totalSpan.textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
+
+                // Lógica do Order Bump
+                const hasComplete = cart.find(item => item.productId === 'pacote_completo');
+                const hasIA = cart.find(item => item.productId === 'guia_ia');
+                
+                if (hasComplete && !hasIA) {
+                    orderBump.style.display = 'block';
+                    bumpCheckbox.checked = false;
+                } else if (hasComplete && hasIA) {
+                    orderBump.style.display = 'block';
+                    bumpCheckbox.checked = true;
+                } else {
+                    orderBump.style.display = 'none';
+                }
             }
         }
 
@@ -1471,23 +1490,36 @@
                 document.getElementById('customer-email').focus();
                 return;
             }
-            if (cart.length === 0) return;
 
-            let productId = cart[cart.length - 1].productId;
-            if (cart.some(item => item.productId === 'pacote_completo')) productId = 'pacote_completo';
+            if (cart.length === 0) {
+                alert("Seu carrinho está vazio!");
+                return;
+            }
+
+            // Para o checkout, enviamos o produto principal ou o pacote
+            let productId = cart[0].productId;
+            if (cart.find(item => item.productId === 'pacote_completo')) {
+                productId = 'pacote_completo';
+            }
 
             document.getElementById('loading-overlay').style.display = 'flex';
+
             try {
-                const response = await fetch(window.location.origin + '/create_preference', {
+                const response = await fetch('/create_preference', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: email, product_id: productId })
+                    body: JSON.stringify({ email: email, product_id: productId, items: cart })
                 });
+
                 const data = await response.json();
-                if (data.init_point) window.location.href = data.init_point;
-                else alert('Erro ao gerar link de pagamento.');
+                if (data.init_point) {
+                    window.location.href = data.init_point;
+                } else {
+                    alert('Erro ao gerar link de pagamento. Tente novamente.');
+                }
             } catch (error) {
-                alert('Erro de conexão.');
+                console.error('Erro:', error);
+                alert('Erro de conexão com o servidor.');
             } finally {
                 document.getElementById('loading-overlay').style.display = 'none';
             }
