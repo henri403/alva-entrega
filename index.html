@@ -451,28 +451,6 @@
             box-shadow: 0 8px 24px rgba(212, 175, 55, 0.4);
         }
 
-        /* Seção de Garantia */
-        .guarantee-section {
-            padding: 40px 24px;
-            text-align: center;
-            background: rgba(212, 175, 55, 0.05);
-            border: 1px solid rgba(212, 175, 55, 0.2);
-            border-radius: 12px;
-            margin-top: 40px;
-        }
-
-        .guarantee-section h4 {
-            font-size: 18px;
-            color: var(--gold);
-            margin-bottom: 12px;
-        }
-
-        .guarantee-section p {
-            font-size: 14px;
-            color: #b0b0b0;
-            line-height: 1.6;
-        }
-
         /* Cart Modal */
         .cart-modal {
             position: fixed;
@@ -730,8 +708,6 @@
                 <button class="btn-combo" onclick="addComboToCart()">👉 Quero o Combo Completo</button>
                 <p style="margin-top: 16px; font-size: 12px; color: #b0b0b0;">Você economiza R$ 11,40 em relação ao preço promocional</p>
             </div>
-
-
         </section>
     </main>
 
@@ -767,6 +743,13 @@
     <script>
         let cart = JSON.parse(localStorage.getItem('alva_cart_premium')) || [];
 
+        // Links Oficiais do Mercado Pago
+        const MP_LINKS = {
+            'guia_ia': 'https://mpago.la/2zMvsQS',
+            'pacote_completo': 'https://mpago.la/2vtDMN7',
+            'combo': 'https://mpago.la/1DiXWB2'
+        };
+
         function toggleCart() {
             const modal = document.getElementById('cart-modal');
             modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
@@ -786,12 +769,8 @@
         }
 
         function addComboToCart() {
-            cart = [];
-            cart.push({ id: Date.now(), productId: 'pacote_completo', name: 'Pacote Completo de Vendas', price: 46.40 });
-            cart.push({ id: Date.now() + 1, productId: 'guia_ia', name: 'Guia Prático de IA para Empresas', price: 23.50 });
-            saveCart();
-            updateCartUI();
-            toggleCart();
+            // Direciona direto para o link do combo
+            window.location.href = MP_LINKS['combo'];
         }
 
         function removeFromCart(id) {
@@ -836,7 +815,7 @@
         function checkout() {
             const email = document.getElementById('customer-email').value;
             if (!email || !email.includes('@')) {
-                alert('Por favor, insira um e-mail válido.');
+                alert('Por favor, insira um e-mail válido para receber o material.');
                 return;
             }
             
@@ -845,7 +824,15 @@
                 return;
             }
 
-            alert('Redirecionando para o checkout seguro...');
+            // Lógica de redirecionamento inteligente
+            if (cart.length >= 2) {
+                // Se tiver 2 ou mais itens, manda para o combo
+                window.location.href = MP_LINKS['combo'];
+            } else {
+                // Se tiver só um, manda para o link específico
+                const item = cart[0];
+                window.location.href = MP_LINKS[item.productId];
+            }
         }
 
         updateCartUI();
