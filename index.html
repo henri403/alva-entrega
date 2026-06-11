@@ -3,17 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Alva Educação - Processo de Vendas e IA</title>
+    <title>Alva Educação - Domine IA e Vendas | O Futuro é Agora</title>
     <style>
         :root {
-            --dark: #0a0a0a;
-            --dark-light: #1a1a2e;
-            --gold: #d4af37;
-            --blue: #1a2a6c;
-            --blue-light: #2d3e8f;
+            --dark: #0a0e27;
+            --darker: #050810;
+            --cyan: #00d9ff;
+            --purple: #b026ff;
+            --pink: #ff006e;
             --white: #ffffff;
-            --gray: #e8e8e8;
-            --text: #f0f0f0;
+            --text: #e0e0ff;
+            --text-muted: #8a8aaa;
+            --success: #00ff88;
         }
 
         * {
@@ -29,21 +30,54 @@
         }
 
         body {
-            font-family: 'Segoe UI', Roboto, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
             color: var(--text);
-            background-color: var(--dark);
+            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 50%, #1a0a3a 100%);
+            background-attachment: fixed;
             line-height: 1.6;
             overflow-x: hidden;
         }
 
-        /* Header Minimalista */
+        /* Animated Background */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(20px); }
+        }
+
+        .bg-element {
+            position: fixed;
+            opacity: 0.05;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bg-element-1 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, var(--cyan), transparent);
+            top: -100px;
+            right: -100px;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .bg-element-2 {
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, var(--purple), transparent);
+            bottom: -50px;
+            left: -50px;
+            animation: float 8s ease-in-out infinite reverse;
+        }
+
+        /* Header */
         header {
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 16px 24px;
-            background-color: var(--dark-light);
-            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+            background: rgba(10, 14, 39, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 217, 255, 0.1);
             position: sticky;
             top: 0;
             z-index: 1000;
@@ -58,7 +92,7 @@
         .logo-container {
             width: 40px;
             height: 40px;
-            background: linear-gradient(135deg, var(--gold), var(--blue));
+            background: linear-gradient(135deg, var(--cyan), var(--purple));
             border-radius: 8px;
             display: flex;
             align-items: center;
@@ -66,208 +100,334 @@
             font-weight: 900;
             color: var(--dark);
             font-size: 20px;
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.5);
         }
 
         .header-title h1 {
-            font-size: 14px;
-            color: var(--gold);
+            font-size: 13px;
+            color: var(--cyan);
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
+            font-weight: 900;
         }
 
         .cart-icon-container {
             position: relative;
             cursor: pointer;
             padding: 8px;
-            color: var(--gold);
+            color: var(--cyan);
         }
 
         .cart-badge {
             position: absolute;
             top: 0;
             right: 0;
-            background: var(--gold);
-            color: var(--dark);
+            background: var(--pink);
+            color: var(--white);
             font-size: 10px;
             font-weight: bold;
             padding: 2px 6px;
             border-radius: 10px;
             display: none;
+            box-shadow: 0 0 10px rgba(255, 0, 110, 0.6);
         }
 
         /* Hero Section */
         .hero {
-            padding: 80px 24px 60px;
+            padding: 120px 24px 80px;
             text-align: center;
-            background: linear-gradient(180deg, var(--dark) 0%, var(--dark-light) 100%);
+            background: linear-gradient(180deg, rgba(10, 14, 39, 0.5) 0%, rgba(26, 10, 58, 0.3) 100%);
             position: relative;
             overflow: hidden;
+            z-index: 1;
         }
 
         .hero-content {
             position: relative;
-            z-index: 1;
-            max-width: 900px;
+            z-index: 2;
+            max-width: 1000px;
             margin: 0 auto;
         }
 
         .hero-tag {
             display: inline-block;
-            background: rgba(212, 175, 55, 0.1);
-            color: var(--gold);
-            padding: 8px 16px;
+            background: rgba(0, 217, 255, 0.1);
+            color: var(--cyan);
+            padding: 10px 20px;
             border-radius: 4px;
             font-size: 12px;
             font-weight: 800;
-            margin-bottom: 24px;
+            margin-bottom: 32px;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            border: 1px solid rgba(212, 175, 55, 0.3);
+            letter-spacing: 2px;
+            border: 1px solid rgba(0, 217, 255, 0.3);
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.2);
         }
 
         .hero h1 {
-            font-size: 42px;
-            line-height: 1.2;
-            margin-bottom: 20px;
+            font-size: 52px;
+            line-height: 1.15;
+            margin-bottom: 24px;
             color: var(--white);
             font-weight: 900;
-            letter-spacing: -1px;
+            letter-spacing: -2px;
         }
 
         .hero h1 span {
-            color: var(--gold);
+            background: linear-gradient(90deg, var(--cyan), var(--purple), var(--pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: glow 3s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { filter: drop-shadow(0 0 10px rgba(0, 217, 255, 0.5)); }
+            50% { filter: drop-shadow(0 0 20px rgba(176, 38, 255, 0.5)); }
         }
 
         .hero-subtitle {
             font-size: 18px;
-            color: #b0b0b0;
-            margin-bottom: 40px;
-            line-height: 1.6;
-            max-width: 750px;
+            color: var(--text-muted);
+            margin-bottom: 48px;
+            line-height: 1.8;
+            max-width: 800px;
             margin-left: auto;
             margin-right: auto;
         }
 
-        /* Trust Bar / Prova Social */
-        .trust-bar {
+        /* Stats Bar */
+        .stats-bar {
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 32px;
-            margin-bottom: 48px;
+            gap: 50px;
+            margin-bottom: 56px;
             flex-wrap: wrap;
-            padding: 20px;
-            background: rgba(255,255,255,0.03);
+            padding: 28px;
+            background: rgba(0, 217, 255, 0.05);
             border-radius: 12px;
-            border: 1px solid rgba(212, 175, 55, 0.1);
+            border: 1px solid rgba(0, 217, 255, 0.15);
+            backdrop-filter: blur(10px);
         }
 
-        .trust-item {
+        .stat-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 4px;
+            gap: 6px;
         }
 
-        .trust-item-value {
-            font-size: 18px;
-            font-weight: 800;
-            color: var(--gold);
+        .stat-value {
+            font-size: 24px;
+            font-weight: 900;
+            background: linear-gradient(90deg, var(--cyan), var(--purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .trust-item-label {
-            color: #888;
-            font-size: 11px;
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 12px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 1px;
         }
 
         /* Main CTA */
         .main-cta {
-            background: linear-gradient(135deg, var(--gold), #c9a227);
+            background: linear-gradient(135deg, var(--cyan), var(--purple));
             color: var(--dark);
             border: none;
-            padding: 20px 48px;
+            padding: 22px 56px;
             border-radius: 4px;
             font-size: 18px;
             font-weight: 900;
             cursor: pointer;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+            letter-spacing: 2px;
+            box-shadow: 0 0 30px rgba(0, 217, 255, 0.5);
             transition: all 0.3s;
             display: inline-block;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .main-cta::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .main-cta:hover::before {
+            left: 100%;
         }
 
         .main-cta:active {
             transform: scale(0.98);
         }
 
-        /* Seção de Produtos */
-        .products-section {
+        /* Seção "O Futuro é Agora" */
+        .future-section {
             padding: 80px 24px;
-            background-color: var(--dark);
+            background: rgba(10, 14, 39, 0.5);
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
         }
 
         .section-title {
-            font-size: 32px;
+            font-size: 36px;
             text-align: center;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
             color: var(--white);
             font-weight: 900;
         }
 
+        .section-title span {
+            background: linear-gradient(90deg, var(--cyan), var(--purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
         .section-subtitle {
             text-align: center;
-            color: #888;
+            color: var(--text-muted);
             margin-bottom: 56px;
-            font-size: 15px;
+            font-size: 16px;
+        }
+
+        .future-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 32px;
+            margin-bottom: 60px;
+        }
+
+        .future-card {
+            background: rgba(0, 217, 255, 0.05);
+            border: 1px solid rgba(0, 217, 255, 0.2);
+            border-radius: 12px;
+            padding: 32px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .future-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(0, 217, 255, 0.2), transparent);
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .future-card:hover {
+            border-color: var(--cyan);
+            background: rgba(0, 217, 255, 0.1);
+            transform: translateY(-5px);
+        }
+
+        .future-card:hover::before {
+            opacity: 1;
+        }
+
+        .future-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .future-card h3 {
+            font-size: 20px;
+            font-weight: 900;
+            margin-bottom: 12px;
+            color: var(--cyan);
+        }
+
+        .future-card p {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* Seção de Produtos */
+        .products-section {
+            padding: 80px 24px;
+            background: linear-gradient(135deg, rgba(10, 14, 39, 0.8) 0%, rgba(26, 10, 58, 0.4) 100%);
+            position: relative;
+            z-index: 1;
+        }
+
+        .products-container {
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
         /* Product Cards */
         .product-card {
-            background: var(--dark-light);
-            border: 1px solid rgba(212, 175, 55, 0.2);
-            border-radius: 12px;
-            padding: 40px 32px;
+            background: rgba(0, 217, 255, 0.03);
+            border: 1px solid rgba(0, 217, 255, 0.15);
+            border-radius: 16px;
+            padding: 48px 40px;
             margin-bottom: 32px;
             position: relative;
             overflow: hidden;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+
+        .product-card:hover {
+            border-color: var(--cyan);
+            background: rgba(0, 217, 255, 0.08);
+            transform: translateY(-5px);
         }
 
         .product-card.featured {
-            border: 2px solid var(--gold);
-            background: linear-gradient(135deg, var(--dark-light) 0%, rgba(212, 175, 55, 0.05) 100%);
+            border: 2px solid var(--cyan);
+            background: linear-gradient(135deg, rgba(0, 217, 255, 0.1) 0%, rgba(176, 38, 255, 0.05) 100%);
+            box-shadow: 0 0 40px rgba(0, 217, 255, 0.2);
         }
 
         .featured-badge {
             position: absolute;
-            top: 24px;
-            right: 24px;
-            background: var(--gold);
+            top: 32px;
+            right: 32px;
+            background: linear-gradient(135deg, var(--cyan), var(--purple));
             color: var(--dark);
-            padding: 6px 12px;
-            font-size: 10px;
+            padding: 8px 16px;
+            font-size: 11px;
             font-weight: 900;
             text-transform: uppercase;
             letter-spacing: 1px;
+            border-radius: 4px;
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.4);
         }
 
         .product-label {
             font-size: 12px;
             font-weight: 800;
-            color: var(--gold);
+            color: var(--cyan);
             text-transform: uppercase;
             margin-bottom: 16px;
-            letter-spacing: 1px;
-            display: block;
+            letter-spacing: 2px;
         }
 
         .product-title {
-            font-size: 28px;
+            font-size: 32px;
             font-weight: 900;
             margin-bottom: 16px;
             color: var(--white);
@@ -276,58 +436,79 @@
 
         .product-desc {
             font-size: 16px;
-            color: #b0b0b0;
-            margin-bottom: 32px;
-            line-height: 1.6;
+            color: var(--text-muted);
+            margin-bottom: 36px;
+            line-height: 1.7;
         }
 
-        /* Benefícios */
+        /* Inside Product */
+        .inside-product {
+            background: rgba(0, 217, 255, 0.08);
+            border: 1px solid rgba(0, 217, 255, 0.15);
+            border-radius: 12px;
+            padding: 28px;
+            margin-bottom: 36px;
+            backdrop-filter: blur(10px);
+        }
+
+        .inside-title {
+            font-size: 14px;
+            font-weight: 900;
+            color: var(--cyan);
+            text-transform: uppercase;
+            margin-bottom: 16px;
+            letter-spacing: 1px;
+        }
+
         .benefits-list {
             list-style: none;
-            margin-bottom: 32px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
         }
 
         .benefits-list li {
             display: flex;
             align-items: flex-start;
-            gap: 12px;
-            font-size: 15px;
-            color: #d0d0d0;
-            margin-bottom: 12px;
+            gap: 10px;
+            font-size: 14px;
+            color: var(--text);
         }
 
         .benefits-list li::before {
-            content: "→";
-            color: var(--gold);
-            font-weight: 900;
+            content: "⚡";
             flex-shrink: 0;
+            font-size: 16px;
         }
 
         /* Pricing */
         .price-container {
-            margin-bottom: 32px;
-            padding-top: 24px;
-            border-top: 1px solid rgba(212, 175, 55, 0.1);
+            margin-bottom: 36px;
+            padding-top: 28px;
+            border-top: 1px solid rgba(0, 217, 255, 0.1);
         }
 
         .new-price {
-            font-size: 48px;
+            font-size: 56px;
             font-weight: 900;
-            color: var(--gold);
+            background: linear-gradient(90deg, var(--cyan), var(--purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             display: flex;
             align-items: baseline;
             gap: 4px;
         }
 
         .new-price small {
-            font-size: 20px;
+            font-size: 24px;
             font-weight: 700;
         }
 
         /* Buttons */
         .btn-buy {
             width: 100%;
-            background: linear-gradient(135deg, var(--gold), #c9a227);
+            background: linear-gradient(135deg, var(--cyan), var(--purple));
             color: var(--dark);
             border: none;
             padding: 20px;
@@ -336,79 +517,120 @@
             font-weight: 900;
             cursor: pointer;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3);
+            letter-spacing: 2px;
+            box-shadow: 0 0 30px rgba(0, 217, 255, 0.3);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-buy::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-buy:hover::before {
+            left: 100%;
+        }
+
+        .btn-buy:active {
+            transform: scale(0.98);
         }
 
         /* Combo Section */
         .combo-section {
-            background: linear-gradient(135deg, var(--blue) 0%, var(--blue-light) 100%);
-            border-radius: 12px;
-            padding: 50px 32px;
+            background: linear-gradient(135deg, rgba(0, 217, 255, 0.15) 0%, rgba(176, 38, 255, 0.15) 100%);
+            border-radius: 16px;
+            padding: 60px 40px;
             text-align: center;
             margin-top: 60px;
-            border: 1px solid rgba(212, 175, 55, 0.2);
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
+            border: 2px solid rgba(0, 217, 255, 0.4);
+            box-shadow: 0 0 50px rgba(0, 217, 255, 0.2);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .combo-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--cyan), var(--purple));
+            color: var(--dark);
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 900;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.4);
+        }
+
+        .combo-section h3 {
+            font-size: 36px;
+            font-weight: 900;
+            margin-bottom: 16px;
+            color: var(--white);
+        }
+
+        .combo-section p {
+            font-size: 16px;
+            color: var(--text-muted);
+            margin-bottom: 32px;
+            line-height: 1.6;
         }
 
         .combo-price {
-            font-size: 56px;
+            font-size: 64px;
             font-weight: 900;
-            color: var(--gold);
+            background: linear-gradient(90deg, var(--cyan), var(--purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             margin-bottom: 32px;
-        }
-
-        /* Cart Modal */
-        .cart-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.95);
-            display: none;
-            justify-content: center;
-            align-items: flex-end;
-            z-index: 2000;
-        }
-
-        .cart-content {
-            background: var(--dark-light);
-            width: 100%;
-            max-width: 500px;
-            border-top-left-radius: 20px;
-            border-top-right-radius: 20px;
-            padding: 32px 24px;
-            max-height: 90vh;
-            overflow-y: auto;
-            border-top: 2px solid var(--gold);
         }
 
         /* Footer */
         footer {
             padding: 60px 24px;
             text-align: center;
-            background: var(--dark-light);
-            border-top: 1px solid rgba(212, 175, 55, 0.2);
+            background: rgba(5, 8, 16, 0.9);
+            border-top: 1px solid rgba(0, 217, 255, 0.2);
+            position: relative;
+            z-index: 1;
+        }
+
+        .copyright {
+            font-size: 12px;
+            color: var(--text-muted);
         }
 
         /* Mobile */
-        @media (max-width: 480px) {
-            .hero h1 { font-size: 32px; }
-            .new-price { font-size: 40px; }
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 36px; }
+            .product-title { font-size: 24px; }
+            .new-price { font-size: 44px; }
             .combo-price { font-size: 48px; }
+            .benefits-list { grid-template-columns: 1fr; }
+            .stats-bar { gap: 30px; }
         }
     </style>
 </head>
 <body>
 
+    <div class="bg-element bg-element-1"></div>
+    <div class="bg-element bg-element-2"></div>
+
     <header>
         <div class="logo-section">
-            <div class="logo-container">A</div>
+            <img src="./alva_logo.jpeg" alt="Alva Educação" style="height: 40px; width: auto; border-radius: 8px;">
             <div class="header-title">
-                <h1>Alva Educação</h1>
+                <h1>Alva IA</h1>
             </div>
         </div>
         <div class="cart-icon-container" onclick="toggleCart()">
@@ -418,97 +640,142 @@
     </header>
 
     <main>
+        <!-- HERO -->
         <section class="hero">
             <div class="hero-content">
-                <span class="hero-tag">Acesso Vitalício + Plano de Implementação Incluso</span>
-                <h1>Implemente um Processo de Vendas Estruturado e Ganhe <span>Produtividade Real com IA</span></h1>
-                <p class="hero-subtitle">O passo a passo para sair da operação desorganizada e construir uma estrutura de vendas previsível, utilizando ferramentas de IA para automatizar o que é repetitivo.</p>
+                <span class="hero-tag">⚡ O Futuro das Vendas é Agora</span>
+                <h1>Não Seja Substituído pela <span>IA</span>. Use-a para Dominar.</h1>
+                <p class="hero-subtitle">O sistema Alva para quem quer a velocidade da tecnologia aliada à estratégia de vendas de elite. Implemente IA de verdade e escale seu faturamento sem depender de mais pessoas.</p>
                 
-                <div class="trust-bar">
-                    <div class="trust-item">
-                        <div class="trust-item-value">Metodologia Alva</div>
-                        <div class="trust-item-label">Focada em Resultados Práticos</div>
+                <div class="stats-bar">
+                    <div class="stat-item">
+                        <div class="stat-value">16 Módulos</div>
+                        <div class="stat-label">Estrutura Completa</div>
                     </div>
-                    <div class="trust-item">
-                        <div class="trust-item-value">Acesso Imediato</div>
-                        <div class="trust-item-label">Material 100% Digital</div>
+                    <div class="stat-item">
+                        <div class="stat-value">100% Digital</div>
+                        <div class="stat-label">Acesso Vitalício</div>
                     </div>
-                    <div class="trust-item">
-                        <div class="trust-item-value">Suporte Direto</div>
-                        <div class="trust-item-label">alvaeducacao@gmail.com</div>
+                    <div class="stat-item">
+                        <div class="stat-value">Atualizado</div>
+                        <div class="stat-label">Metodologia Viva</div>
                     </div>
                 </div>
 
-                <button class="main-cta" onclick="document.querySelector('.products-section').scrollIntoView({behavior: 'smooth'})">Quero escalar minhas vendas com IA →</button>
+                <button class="main-cta" onclick="document.querySelector('.products-section').scrollIntoView({behavior: 'smooth'})">Quero Escalar com IA →</button>
             </div>
         </section>
 
+        <!-- LOGO SEAL -->
+        <section style="padding: 60px 24px; background: rgba(10, 14, 39, 0.5); text-align: center; position: relative; z-index: 1;">
+            <img src="./alva_logo.jpeg" alt="Alva Educação" style="height: 120px; width: auto; margin-bottom: 32px; filter: drop-shadow(0 0 30px rgba(0, 217, 255, 0.3)); transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+            <h2 style="font-size: 24px; color: var(--text-muted); font-weight: 500; margin-bottom: 8px;">Metodologia Comprovada</h2>
+            <p style="font-size: 14px; color: var(--text-muted); letter-spacing: 1px;">Desenvolvida por especialistas em Vendas e IA</p>
+        </section>
+
+        <!-- O FUTURO -->
+        <section class="future-section">
+            <h2 class="section-title">Por Que <span>Alva</span>?</h2>
+            <p class="section-subtitle">Três pilares que transformam IA em resultado real</p>
+            
+            <div class="future-grid">
+                <div class="future-card">
+                    <div class="future-icon">🤖</div>
+                    <h3>IA Aplicada</h3>
+                    <p>Não é teoria. Cada módulo traz prompts reais, ferramentas que funcionam e processos que você implementa hoje mesmo.</p>
+                </div>
+                <div class="future-card">
+                    <div class="future-icon">⚙️</div>
+                    <h3>Vendas Sistematizadas</h3>
+                    <p>Do zero ao fechamento avançado. Scripts testados, técnicas que funcionam, gestão de equipe que escala.</p>
+                </div>
+                <div class="future-card">
+                    <div class="future-icon">🚀</div>
+                    <h3>Escala Previsível</h3>
+                    <p>Saia da sorte. Construa um processo que gera receita consistente mês após mês, com ou sem você.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- PRODUTOS -->
         <section class="products-section">
-            <h2 class="section-title">Escolha seu nível de implementação</h2>
-            <p class="section-subtitle">Materiais práticos desenhados para empresários e gestores que buscam eficiência.</p>
+            <div class="products-container">
+                <h2 class="section-title">Escolha Seu <span>Caminho</span></h2>
+                <p class="section-subtitle">Dois programas para transformar seu negócio com IA</p>
 
-            <!-- Guia de IA -->
-            <div class="product-card">
-                <span class="product-label">E-book Prático</span>
-                <h3 class="product-title">Guia Prático de IA para Empresas</h3>
-                <p class="product-desc">Implemente Inteligência Artificial no seu dia a dia e ganhe tempo real de produtividade com ferramentas aplicadas ao negócio.</p>
-                
-                <ul class="benefits-list">
-                    <li>10 capítulos com casos reais de implementação</li>
-                    <li>Prompts prontos para copiar e colar</li>
-                    <li>Ferramentas de automação gratuitas</li>
-                    <li>Plano prático de implementação</li>
-                    <li>Acesso vitalício ao conteúdo</li>
-                </ul>
+                <!-- Guia de IA -->
+                <div class="product-card">
+                    <span class="product-label">⚡ Nível 1 - Fundação</span>
+                    <h3 class="product-title">Guia Prático de IA para Empresas</h3>
+                    <p class="product-desc">Para quem quer começar agora: implemente IA no seu dia a dia, ganhe produtividade real sem complicações técnicas.</p>
+                    
+                    <div class="inside-product">
+                        <div class="inside-title">Dentro do Guia:</div>
+                        <ul class="benefits-list">
+                            <li>10 capítulos com casos reais</li>
+                            <li>Prompts prontos para usar</li>
+                            <li>Ferramentas gratuitas listadas</li>
+                            <li>Plano de implementação</li>
+                            <li>Acesso vitalício</li>
+                            <li>Atualizações incluídas</li>
+                        </ul>
+                    </div>
 
-                <div class="price-container">
-                    <div class="new-price"><small>R$</small> 34,90</div>
+                    <div class="price-container">
+                        <div class="new-price"><small>R$</small> 44,90</div>
+                    </div>
+
+                    <button class="btn-buy" onclick="addToCart('guia_ia', 44.90, 'Guia Prático de IA para Empresas')">Adicionar ao Carrinho</button>
                 </div>
 
-                <button class="btn-buy" onclick="addToCart('guia_ia', 34.90, 'Guia Prático de IA para Empresas')">Adicionar ao Carrinho</button>
-            </div>
+                <!-- Pacote Completo -->
+                <div class="product-card featured">
+                    <div class="featured-badge">⭐ Mais Escolhido</div>
+                    <span class="product-label">🔥 Nível 2 - Completo</span>
+                    <h3 class="product-title">Pacote Completo de Vendas (16 Módulos)</h3>
+                    <p class="product-desc">A estrutura definitiva: do zero ao fechamento avançado. Inclui gestão de equipe, técnicas de objeção e integração com IA para escalar vendas de forma previsível.</p>
+                    
+                    <div class="inside-product">
+                        <div class="inside-title">Dentro do Pacote:</div>
+                        <ul class="benefits-list">
+                            <li>16 módulos estruturados</li>
+                            <li>Scripts de prospecção</li>
+                            <li>Técnicas de objeção</li>
+                            <li>Gestão de equipe</li>
+                            <li>Integração com IA</li>
+                            <li>Atualizações contínuas</li>
+                        </ul>
+                    </div>
 
-            <!-- Pacote Completo -->
-            <div class="product-card featured">
-                <div class="featured-badge">Recomendado</div>
-                <span class="product-label">Treinamento Completo</span>
-                <h3 class="product-title">Pacote Completo de Vendas (16 Módulos)</h3>
-                <p class="product-desc">A metodologia definitiva para criar uma máquina de vendas previsível que gera receita consistente mês após mês.</p>
-                
-                <ul class="benefits-list">
-                    <li>16 módulos do zero ao fechamento avançado</li>
-                    <li>Scripts de prospecção testados em campo</li>
-                    <li>Técnicas de contorno de objeções que funcionam</li>
-                    <li>Estratégias de gestão de equipe de vendas</li>
-                    <li>Acesso vitalício + atualizações contínuas</li>
-                </ul>
+                    <div class="price-container">
+                        <div class="new-price"><small>R$</small> 59,90</div>
+                    </div>
 
-                <div class="price-container">
-                    <div class="new-price"><small>R$</small> 46,40</div>
+                    <button class="btn-buy" onclick="addToCart('pacote_completo', 59.90, 'Pacote Completo de Vendas')">Adicionar ao Carrinho</button>
                 </div>
 
-                <button class="btn-buy" onclick="addToCart('pacote_completo', 46.40, 'Pacote Completo de Vendas')">Adicionar ao Carrinho</button>
-            </div>
-
-            <!-- Combo Elite -->
-            <div class="combo-section">
-                <span class="hero-tag" style="background: var(--gold); color: var(--dark);">Melhor Custo-Benefício</span>
-                <h3 style="font-size: 32px; margin-bottom: 16px; color: white;">COMBO ALVA ELITE</h3>
-                <p style="color: #d0d0d0; margin-bottom: 32px;">Leve o Pacote de Vendas + Guia de IA e tenha a estrutura completa.</p>
-                <div class="combo-price">R$ 69,90</div>
-                <button class="btn-buy" style="background: var(--gold); font-size: 20px;" onclick="window.location.href='https://mpago.la/1DiXWB2'">👉 Quero o Combo Completo</button>
+                <!-- Combo Elite -->
+                <div class="combo-section">
+                    <div class="combo-badge">💎 Melhor Investimento</div>
+                    <h3>COMBO ALVA ELITE</h3>
+                    <p>Tenha a estrutura completa: Pacote de Vendas + Guia de IA. Tudo que você precisa para dominar o mercado com IA.</p>
+                    <div class="combo-price">R$ 87,00</div>
+                    <button class="btn-buy" onclick="window.location.href='https://mpago.la/1DiXWB2'">👉 Quero o Combo Elite</button>
+                    <p style="margin-top: 16px; font-size: 13px; color: var(--text-muted);">Você economiza R$ 17,80 em relação aos preços individuais</p>
+                </div>
             </div>
         </section>
     </main>
 
-    <div id="cart-modal" class="cart-modal">
-        <div class="cart-content">
+    <!-- CART MODAL -->
+    <div id="cart-modal" class="cart-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 8, 16, 0.95); display: none; justify-content: center; align-items: flex-end; z-index: 2000; backdrop-filter: blur(5px);">
+        <div style="background: linear-gradient(135deg, rgba(10, 14, 39, 0.9) 0%, rgba(26, 10, 58, 0.6) 100%); width: 100%; max-width: 500px; border-top-left-radius: 20px; border-top-right-radius: 20px; padding: 32px 24px; max-height: 90vh; overflow-y: auto; border-top: 2px solid var(--cyan); backdrop-filter: blur(10px);">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-                <h3 style="color: var(--gold);">Seu Carrinho</h3>
-                <span style="font-size: 28px; cursor: pointer; color: var(--gold);" onclick="toggleCart()">×</span>
+                <h3 style="color: var(--cyan);">Seu Carrinho</h3>
+                <span style="font-size: 28px; cursor: pointer; color: var(--cyan);" onclick="toggleCart()">×</span>
             </div>
             <div id="cart-items-list"></div>
-            <div style="margin: 24px 0; display: flex; justify-content: space-between; font-size: 20px; font-weight: 900; color: var(--white); padding: 16px 0; border-top: 1px solid rgba(212, 175, 55, 0.2);">
+            <div style="margin: 24px 0; display: flex; justify-content: space-between; font-size: 20px; font-weight: 900; color: var(--white); padding: 16px 0; border-top: 1px solid rgba(0, 217, 255, 0.2);">
                 <span>Total:</span>
                 <span id="cart-total-value">R$ 0,00</span>
             </div>
@@ -517,11 +784,11 @@
     </div>
 
     <footer>
-        <p style="font-size: 12px; color: #666;">© 2026 Alva Educação. Transformando vendedores em especialistas de alto impacto.</p>
+        <p class="copyright">© 2026 Alva Educação. O futuro das vendas é agora. Não fique para trás.</p>
     </footer>
 
     <script>
-        let cart = JSON.parse(localStorage.getItem('alva_cart_v62')) || [];
+        let cart = JSON.parse(localStorage.getItem('alva_cart_v64')) || [];
         const MP_LINKS = {
             'guia_ia': 'https://mpago.la/2zMvsQS',
             'pacote_completo': 'https://mpago.la/2vtDMN7',
@@ -538,7 +805,7 @@
             const exists = cart.find(item => item.productId === productId);
             if (!exists) {
                 cart.push({ id: Date.now(), productId, name, price });
-                localStorage.setItem('alva_cart_v62', JSON.stringify(cart));
+                localStorage.setItem('alva_cart_v64', JSON.stringify(cart));
                 updateCartUI();
                 toggleCart();
             } else {
@@ -556,9 +823,9 @@
             let total = 0;
             list.innerHTML = cart.map(item => {
                 total += item.price;
-                return `<div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(212, 175, 55, 0.1);">
+                return `<div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(0, 217, 255, 0.1);">
                     <span style="font-size: 14px;">${item.name}</span>
-                    <span style="color: var(--gold);">R$ ${item.price.toFixed(2)}</span>
+                    <span style="color: var(--cyan);">R$ ${item.price.toFixed(2)}</span>
                 </div>`;
             }).join('');
             totalSpan.textContent = `R$ ${total.toFixed(2)}`;
@@ -568,6 +835,7 @@
             if (cart.length >= 2) window.location.href = MP_LINKS['combo'];
             else if (cart.length === 1) window.location.href = MP_LINKS[cart[0].productId];
         }
+
         updateCartUI();
     </script>
 </body>
